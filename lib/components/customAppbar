@@ -1,0 +1,93 @@
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+import '/flutter_flow/flutter_flow_icon_button.dart';
+import '/flutter_flow/flutter_flow_theme.dart';
+import '/flutter_flow/flutter_flow_widgets.dart';
+
+class CustomAppbarWidget extends StatelessWidget {
+  const CustomAppbarWidget({
+    Key? key,
+    required this.backButton,
+    required this.actionButton,
+    this.actionButtonText,
+    this.actionButtonAction,
+    required this.optionsButton,
+    required this.optionsButtonAction,
+  }) : super(key: key);
+
+  final bool backButton;
+  final bool actionButton;
+  final String? actionButtonText;
+  final Future Function()? actionButtonAction;
+  final bool optionsButton;
+  final Future Function()? optionsButtonAction;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        if (backButton)
+          FlutterFlowIconButton(
+            borderColor: FlutterFlowTheme.of(context).secondaryBackground,
+            borderRadius: 24,
+            borderWidth: 1,
+            buttonSize: 44,
+            fillColor: FlutterFlowTheme.of(context).secondaryBackground,
+            icon: Icon(
+              Icons.keyboard_arrow_left,
+              color: FlutterFlowTheme.of(context).primaryText,
+              size: 18,
+            ),
+            onPressed: () async {
+              Navigator.of(context).pop();
+            },
+          ),
+        Row(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            if (actionButton)
+              FFButtonWidget(
+                onPressed: () async {
+                  await actionButtonAction?.call();
+                },
+                text: actionButtonText ?? 'Button',
+                options: FFButtonOptions(
+                  height: 44,
+                  padding: EdgeInsets.zero,
+                  iconPadding: EdgeInsets.zero,
+                  color: FlutterFlowTheme.of(context).primary,
+                  textStyle: TextStyle(
+                    fontFamily: 'Inter',
+                    color: FlutterFlowTheme.of(context).primaryBackground,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  elevation: 0,
+                  borderSide: BorderSide.none,
+                  borderRadius: BorderRadius.circular(25),
+                ),
+              ),
+            if (optionsButton)
+              FlutterFlowIconButton(
+                borderColor: FlutterFlowTheme.of(context).secondaryBackground,
+                borderRadius: 24,
+                borderWidth: 1,
+                buttonSize: 44,
+                fillColor: FlutterFlowTheme.of(context).secondaryBackground,
+                icon: FaIcon(
+                  FontAwesomeIcons.ellipsisH,
+                  color: FlutterFlowTheme.of(context).primaryText,
+                  size: 18,
+                ),
+                onPressed: () async {
+                  await optionsButtonAction?.call();
+                },
+              ),
+          ].divide(SizedBox(width: 8)),
+        ),
+      ],
+    );
+  }
+}
