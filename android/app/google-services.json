@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "588995605879",
+    "project_id": "tastehub-5a84b",
+    "storage_bucket": "tastehub-5a84b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:588995605879:android:1af0b6563eb1850ce01d72",
+        "android_client_info": {
+          "package_name": "com.example.taste_hub"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5Xoks7maFE5V1jn0t_Mv4_5aBOk8Z1m4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

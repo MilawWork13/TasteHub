@@ -1,9 +1,21 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:taste_hub/view/register.dart';
-import 'package:taste_hub/view/signin.dart';
-import 'package:taste_hub/view/splash.dart';
+import 'package:taste_hub/view/homePageWidget.dart';
+import 'package:taste_hub/view/registerWidget.dart';
+import 'package:taste_hub/view/signInWidget.dart';
+import 'package:taste_hub/view/splashWidget.dart';
+import 'package:taste_hub/view/onBoardingSlideShowWidget.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+      options: const FirebaseOptions(
+    apiKey: 'AIzaSyC5Xoks7maFE5V1jn0t_Mv4_5aBOk8Z1m4',
+    appId: '1:588995605879:android:1af0b6563eb1850ce01d72',
+    messagingSenderId: '588995605879',
+    projectId: 'tastehub-5a84b',
+    storageBucket: 'tastehub-5a84b.appspot.com',
+  ));
   runApp(const MyApp());
 }
 
@@ -17,9 +29,11 @@ class MyApp extends StatelessWidget {
       title: 'TasteHUB',
       initialRoute: '/splash',
       routes: {
+        '/home': (context) => const HomePage(),
         '/splash': (context) => const SplashWidget(),
         '/sign_in': (context) => const SignInWidget(),
-        '/register': (context) => const OnboardingCreateAccountWidget(),
+        '/register': (context) => const RegisterWidget(),
+        '/onboarding': (context) => const OnboardingSlideshowWidget(),
       },
     );
   }
