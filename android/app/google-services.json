@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "588995605879",
+    "project_id": "tastehub-5a84b",
+    "storage_bucket": "tastehub-5a84b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:588995605879:android:1af0b6563eb1850ce01d72",
+        "android_client_info": {
+          "package_name": "com.example.taste_hub"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "588995605879-3e044puhd4nkpag1011a9gug19086q3t.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.taste_hub",
+            "certificate_hash": "dd1448460d973ddf8c056903e8332f313bd7b94e"
+          }
+        },
+        {
+          "client_id": "588995605879-j4bpskskgbsqscg7tla7vsdanpaac1i5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5Xoks7maFE5V1jn0t_Mv4_5aBOk8Z1m4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "588995605879-j4bpskskgbsqscg7tla7vsdanpaac1i5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
