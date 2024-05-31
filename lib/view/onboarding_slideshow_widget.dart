@@ -5,10 +5,10 @@ import 'package:taste_hub/components/custom_back_arrow.dart';
 import 'package:taste_hub/components/on_boarding_slide.dart';
 
 class OnboardingSlideshowWidget extends StatefulWidget {
-  const OnboardingSlideshowWidget({Key? key}) : super(key: key);
+  const OnboardingSlideshowWidget({super.key});
 
   @override
-  _OnboardingSlideshowWidgetState createState() =>
+  State<OnboardingSlideshowWidget> createState() =>
       _OnboardingSlideshowWidgetState();
 }
 
@@ -89,19 +89,15 @@ class _OnboardingSlideshowWidgetState extends State<OnboardingSlideshowWidget> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(
-                          255, 228, 15, 0), // Background color
-                      minimumSize: const Size(
-                          double.infinity, 50), // Button width and height
+                      backgroundColor: const Color.fromARGB(255, 228, 15, 0),
+                      minimumSize: const Size(double.infinity, 50),
                       shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(25), // Button border radius
+                        borderRadius: BorderRadius.circular(25),
                       ),
                     ),
                     child: Text(
                       _currentPage < 2 ? 'Continue' : 'Finish Onboarding',
-                      style: const TextStyle(
-                          fontSize: 18, color: Colors.white), // Text style
+                      style: const TextStyle(fontSize: 18, color: Colors.white),
                     ),
                   ),
                 ),

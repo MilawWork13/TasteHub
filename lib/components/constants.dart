@@ -1,3 +1,3 @@
-const MONGO_URL =
+const mongoUrl =
     "mongodb+srv://artemkorzhan13:H4gBMphStTrkIJlC@cluster0.3jgdnap.mongodb.net/";
-const COLLECTION_NAME = "users";
+const collectionName = "users";

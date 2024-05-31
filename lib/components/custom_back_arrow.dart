@@ -6,11 +6,11 @@ class CustomBackArrow extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onBackButtonPressed;
 
   const CustomBackArrow({
-    Key? key,
+    super.key,
     required this.title,
     this.backButton = false,
     this.onBackButtonPressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

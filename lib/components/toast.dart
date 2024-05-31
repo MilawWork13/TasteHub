@@ -8,7 +8,7 @@ void showErrorToast(BuildContext context, {required String message}) {
     autoDismiss: true,
     position: DelightSnackbarPosition.top,
     builder: (context) => ToastCard(
-      color: Color.fromARGB(240, 255, 207, 207),
+      color: const Color.fromARGB(240, 255, 207, 207),
       leading: const Icon(
         Icons.error,
         color: Colors.red,

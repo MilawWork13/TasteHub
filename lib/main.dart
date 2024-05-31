@@ -1,11 +1,11 @@
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:taste_hub/view/homePageWidget.dart';
-import 'package:taste_hub/view/registerWidget.dart';
-import 'package:taste_hub/view/signInWidget.dart';
-import 'package:taste_hub/view/splashWidget.dart';
-import 'package:taste_hub/view/onBoardingSlideShowWidget.dart';
+import 'package:taste_hub/view/home_page_widget.dart';
+import 'package:taste_hub/view/sign_up_widget.dart';
+import 'package:taste_hub/view/sign_in_widget.dart';
+import 'package:taste_hub/view/splash_widget.dart';
+import 'package:taste_hub/view/onboarding_slideshow_widget.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

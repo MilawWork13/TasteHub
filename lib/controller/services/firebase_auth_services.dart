@@ -14,7 +14,7 @@ class FirebaseAuthService {
       return credential.user;
     } on FirebaseAuthException catch (e) {
       // ignore: use_build_context_synchronously
-      _handleAuthException(context, e);
+      handleAuthException(context, e);
     }
     return null;
   }
@@ -28,12 +28,12 @@ class FirebaseAuthService {
       return credential.user;
     } on FirebaseAuthException catch (e) {
       // ignore: use_build_context_synchronously
-      _handleAuthException(context, e);
+      handleAuthException(context, e);
     }
     return null;
   }
 
-  void _handleAuthException(BuildContext context, FirebaseAuthException e) {
+  void handleAuthException(BuildContext context, FirebaseAuthException e) {
     String message;
     switch (e.code) {
       case 'email-already-in-use':

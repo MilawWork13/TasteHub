@@ -1,32 +1,34 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:taste_hub/components/custom_back_arrow.dart';
-import 'package:taste_hub/model/user_auth/firebase_auth_imp/firebase_auth_services.dart';
+import 'package:taste_hub/controller/sign_in_controller.dart';
+import 'package:taste_hub/controller/sign_up_controller.dart';
 
-class SignInWidget extends StatefulWidget {
-  const SignInWidget({super.key});
+class RegisterWidget extends StatefulWidget {
+  const RegisterWidget({super.key});
 
   @override
-  State<SignInWidget> createState() => _SignInWidgetState();
+  State<RegisterWidget> createState() => _RegisterWidgetState();
 }
 
-class _SignInWidgetState extends State<SignInWidget> {
-  final FirebaseAuthService _auth = FirebaseAuthService();
-  bool isSigning = false;
+class _RegisterWidgetState extends State<RegisterWidget> {
+  final SignInController _signInController = SignInController();
+  final SignUpController _signUpController = SignUpController();
+  bool isSigningUp = false;
+  TextEditingController _usernameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+    _usernameController = TextEditingController();
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
   }
 
   @override
   void dispose() {
+    _usernameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -50,36 +52,33 @@ class _SignInWidgetState extends State<SignInWidget> {
           children: [
             const Row(
               children: [
-                Icon(Icons.restaurant_menu, size: 36, color: Colors.red),
+                Icon(Icons.person_add, size: 36, color: Colors.red),
                 SizedBox(width: 8),
                 Text(
-                  'Sign In',
+                  'Create an account',
                   style: TextStyle(
                     fontFamily: 'Sora',
                     fontSize: 34,
-                    fontWeight: FontWeight.w900,
-                    color: Color.fromARGB(255, 0, 0, 0),
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 8), // Adjust the height as needed
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.red.shade50,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Text(
-                'TasteHUB - Meals you\'ll love!',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromARGB(255, 228, 15, 0),
-                ),
-              ),
-            ),
             const SizedBox(height: 24),
+            TextField(
+              controller: _usernameController,
+              decoration: InputDecoration(
+                labelText: 'Full Name',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                prefixIcon: const Icon(Icons.person),
+                filled: true,
+                fillColor: Colors.white,
+              ),
+              keyboardType: TextInputType.name,
+            ),
+            const SizedBox(height: 18),
             TextField(
               controller: _emailController,
               decoration: InputDecoration(
@@ -109,8 +108,15 @@ class _SignInWidgetState extends State<SignInWidget> {
             ),
             const SizedBox(height: 24),
             ElevatedButton(
-              onPressed: () {
-                _signIn();
+              onPressed: () async {
+                setState(() {
+                  isSigningUp = true;
+                });
+                await _signUpController.signUp(context, _emailController,
+                    _passwordController, _usernameController);
+                setState(() {
+                  isSigningUp = false;
+                });
               },
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 50),
@@ -119,12 +125,12 @@ class _SignInWidgetState extends State<SignInWidget> {
                 ),
                 backgroundColor: const Color.fromARGB(255, 228, 15, 0),
               ),
-              child: isSigning
+              child: isSigningUp
                   ? const CircularProgressIndicator(
                       color: Colors.white,
                     )
                   : const Text(
-                      'Sign In',
+                      'Create Account',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 18,
@@ -149,15 +155,20 @@ class _SignInWidgetState extends State<SignInWidget> {
             ),
             const SizedBox(height: 12),
             ElevatedButton.icon(
-              onPressed: () {
-                _signInWithGoogle();
+              onPressed: () async {
+                await _signInController.signInWithGoogle(context);
               },
               icon: Image.asset(
                 'lib/resources/img/google.png',
                 width: 24,
                 height: 24,
               ),
-              label: const Text('Sign in with Google'),
+              label: const Text(
+                'Sign in with Google',
+                style: TextStyle(
+                  fontSize: 17,
+                ),
+              ),
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.black,
                 backgroundColor: Colors.white,
@@ -168,88 +179,9 @@ class _SignInWidgetState extends State<SignInWidget> {
                 ),
               ),
             ),
-            const SizedBox(height: 12),
-            const Spacer(),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  RichText(
-                    text: TextSpan(
-                      text: "Don't have an account yet? ",
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Colors.black,
-                      ),
-                      children: [
-                        TextSpan(
-                          text: 'Create one!',
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            decoration: TextDecoration.underline,
-                          ),
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = () {
-                              Navigator.pushNamed(context, '/register');
-                            },
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
           ],
         ),
       ),
     );
-  }
-
-  _signIn() async {
-    setState(() {
-      isSigning = true;
-    });
-
-    String email = _emailController.text;
-    String password = _passwordController.text;
-
-    // Sign in the user
-    User? user =
-        await _auth.signInWithEmailAndPassword(context, email, password);
-
-    setState(() {
-      isSigning = false;
-    });
-
-    if (user != null) {
-      Navigator.pushNamed(context, "/home");
-    } else {}
-  }
-
-  _signInWithGoogle() async {
-    GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-
-    GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
-
-    AuthCredential credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth?.accessToken,
-      idToken: googleAuth?.idToken,
-    );
-
-    UserCredential userCredential =
-        await FirebaseAuth.instance.signInWithCredential(credential);
-
-    print(userCredential.user?.displayName);
-
-    if (userCredential.user != null) {
-      Navigator.of(context).pushNamed('/home');
-    }
   }
 }
