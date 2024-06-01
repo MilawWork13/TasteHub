@@ -159,7 +159,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                 await _signInController.signInWithGoogle(context);
               },
               icon: Image.asset(
-                'lib/resources/img/google.png',
+                'assets/google.png',
                 width: 24,
                 height: 24,
               ),

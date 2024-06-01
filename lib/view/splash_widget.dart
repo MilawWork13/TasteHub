@@ -1,78 +1,57 @@
+import 'dart:async';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class SplashWidget extends StatefulWidget {
-  const SplashWidget({super.key});
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({Key? key});
 
   @override
-  State<SplashWidget> createState() => _SplashWidgetState();
+  _SplashScreenState createState() => _SplashScreenState();
 }
 
-class _SplashWidgetState extends State<SplashWidget> {
+class _SplashScreenState extends State<SplashScreen> {
+  double _opacity = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    Timer(const Duration(seconds: 2), () {
+      checkAuthStatus();
+    });
+    // Start the fade animation after a short delay
+    Future.delayed(const Duration(milliseconds: 100), () {
+      setState(() {
+        _opacity = 1.0;
+      });
+    });
+  }
+
+  void checkAuthStatus() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      // User is signed in. Navigate to home.
+      Navigator.of(context).pushReplacementNamed('/home');
+    } else {
+      // No user signed in. Navigate to get_started.
+      Navigator.of(context).pushReplacementNamed('/get_started');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              'lib/resources/img/logo.png',
-              width: 700,
-              height: 650,
-              fit: BoxFit.contain,
-            ),
-            const SizedBox(height: 26),
-            SizedBox(
-              width: 350,
-              height: 60,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pushNamed('/onboarding');
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 228, 15, 0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(32),
-                  ),
-                ),
-                child: const Text(
-                  'Get Started',
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 12),
-            GestureDetector(
-              onTap: () {
-                Navigator.of(context).pushNamed('/sign_in');
-              },
-              child: RichText(
-                text: const TextSpan(
-                  children: [
-                    TextSpan(
-                      text: 'Already a member? ',
-                      style: TextStyle(
-                        color: Colors.black,
-                      ),
-                    ),
-                    TextSpan(
-                      text: 'Sign In',
-                      style: TextStyle(
-                        decoration: TextDecoration.underline,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
+        // Use AnimatedOpacity for fade animation
+        child: AnimatedOpacity(
+          opacity: _opacity,
+          duration: const Duration(milliseconds: 500),
+          child: Image.asset(
+            'assets/logo.png',
+            width: 400,
+            height: 400,
+          ),
         ),
       ),
     );

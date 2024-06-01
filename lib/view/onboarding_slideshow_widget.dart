@@ -47,7 +47,7 @@ class _OnboardingSlideshowWidgetState extends State<OnboardingSlideshowWidget> {
                   // First Onboarding Slide
                   OnboardingSlide(
                     title: 'Create your own recipes',
-                    imageUrl: 'lib/resources/img/Customers_Enjoy_Food.png',
+                    imageUrl: 'assets/Customers_Enjoy_Food.png',
                     description:
                         'Use our tools to add audios, photos and notes to your recipe',
                     paddingHorizontal: paddingHorizontal,
@@ -56,7 +56,7 @@ class _OnboardingSlideshowWidgetState extends State<OnboardingSlideshowWidget> {
                   // Second Onboarding Slide
                   OnboardingSlide(
                     title: 'Learn cultural recipes from all around the globe',
-                    imageUrl: 'lib/resources/img/Chef_Cooking.png',
+                    imageUrl: 'assets/Chef_Cooking.png',
                     description:
                         'Enjoy any recipes you find delicious, sort them by the culture, cost and time to prepare',
                     paddingHorizontal: paddingHorizontal,
@@ -65,7 +65,7 @@ class _OnboardingSlideshowWidgetState extends State<OnboardingSlideshowWidget> {
                   // Third Onboarding Slide
                   OnboardingSlide(
                     title: 'Make it easier with AI',
-                    imageUrl: 'lib/resources/img/Food1.png',
+                    imageUrl: 'assets/Food1.png',
                     description:
                         'Our AI Assistant "Tasteful" will always answer to any of your culinary questions',
                     paddingHorizontal: paddingHorizontal,

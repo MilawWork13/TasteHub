@@ -1,21 +1,25 @@
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:taste_hub/view/home_page_widget.dart';
 import 'package:taste_hub/view/sign_up_widget.dart';
 import 'package:taste_hub/view/sign_in_widget.dart';
-import 'package:taste_hub/view/splash_widget.dart';
+import 'package:taste_hub/view/get_started_widget.dart';
 import 'package:taste_hub/view/onboarding_slideshow_widget.dart';
+import 'package:taste_hub/view/splash_widget.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
+
   await Firebase.initializeApp(
-      options: const FirebaseOptions(
-    apiKey: 'AIzaSyC5Xoks7maFE5V1jn0t_Mv4_5aBOk8Z1m4',
-    appId: '1:588995605879:android:1af0b6563eb1850ce01d72',
-    messagingSenderId: '588995605879',
-    projectId: 'tastehub-5a84b',
-    storageBucket: 'tastehub-5a84b.appspot.com',
+      options: FirebaseOptions(
+    apiKey: dotenv.env['FIREBASE_API_KEY']!,
+    appId: dotenv.env['FIREBASE_APP_ID']!,
+    messagingSenderId: dotenv.env['FIREBASE_MESSAGING_CENTER_ID']!,
+    projectId: dotenv.env['FIREBASE_PROJECT_ID']!,
+    storageBucket: dotenv.env['FIREBASE_STORAGE_BUCKET']!,
   ));
 
   // Activate Firebase App Check
@@ -39,8 +43,9 @@ class MyApp extends StatelessWidget {
       title: 'TasteHUB',
       initialRoute: '/splash',
       routes: {
+        '/splash': (context) => const SplashScreen(),
         '/home': (context) => const HomePage(),
-        '/splash': (context) => const SplashWidget(),
+        '/get_started': (context) => const GetStartedWidget(),
         '/sign_in': (context) => const SignInWidget(),
         '/register': (context) => const RegisterWidget(),
         '/onboarding': (context) => const OnboardingSlideshowWidget(),

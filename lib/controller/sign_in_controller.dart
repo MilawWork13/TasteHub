@@ -58,4 +58,11 @@ class SignInController {
           message: 'Failed to sign in with Google. Please try again.');
     }
   }
+
+  logout(BuildContext context) async {
+    await GoogleSignIn().signOut();
+    await FirebaseAuth.instance.signOut();
+    // ignore: use_build_context_synchronously
+    Navigator.pushNamed(context, '/sign_in');
+  }
 }
