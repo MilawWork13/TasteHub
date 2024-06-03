@@ -67,13 +67,18 @@ class RecipeCard extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              recipe.name,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontFamily: 'Inter',
-                                fontSize: 32,
-                                fontWeight: FontWeight.bold,
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.8,
+                              child: Text(
+                                recipe.name,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: 'Inter',
+                                  fontSize: 32,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                softWrap: true,
+                                overflow: TextOverflow.visible,
                               ),
                             ),
                             FutureBuilder<Map<String, dynamic>?>(

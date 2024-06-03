@@ -38,7 +38,7 @@ class Recipe {
   final List<String> allergens;
   final double price;
   final String creator;
-  final DateTime creationDate;
+  final String creationDate;
   final String image;
   final List<String> audios;
 
@@ -72,7 +72,7 @@ class Recipe {
       allergens: List<String>.from(json['allergens']),
       price: json['price'],
       creator: json['creator'],
-      creationDate: DateTime.parse(json['creation_date']),
+      creationDate: json['creation_date'],
       image: json['image'],
       audios: List<String>.from(json['audios']),
     );

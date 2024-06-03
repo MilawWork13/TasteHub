@@ -98,11 +98,16 @@ class RecipeDetailScreenState extends State<RecipeDetailScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             // Recipe name
-                            Text(
-                              widget.recipe.name,
-                              style: const TextStyle(
-                                fontSize: 32,
-                                fontWeight: FontWeight.bold,
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.7,
+                              child: Text(
+                                widget.recipe.name,
+                                style: const TextStyle(
+                                  fontSize: 32,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                softWrap: true,
+                                overflow: TextOverflow.visible,
                               ),
                             ),
                             // Preparation time and cost
@@ -312,10 +317,9 @@ class RecipeDetailScreenState extends State<RecipeDetailScreen> {
   }
 
   double calculateHeight() {
-    if (widget.recipe.ingredients.length > widget.recipe.instructions.length) {
-      return widget.recipe.ingredients.length * 75;
-    } else {
-      return widget.recipe.instructions.length * 85;
-    }
+    return ((widget.recipe.ingredients.length +
+                widget.recipe.instructions.length) /
+            2) *
+        85;
   }
 }

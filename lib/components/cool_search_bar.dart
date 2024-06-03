@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:taste_hub/components/filters_for_search.dart';
 
 class SearchBarNiceWidget extends StatelessWidget {
   final Function(String) onSearch;
 
-  const SearchBarNiceWidget({super.key, required this.onSearch});
+  const SearchBarNiceWidget({
+    super.key,
+    required this.onSearch,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -67,19 +71,19 @@ class SearchBarNiceWidget extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: Colors.grey[300]!,
+              GestureDetector(
+                onTap: () {},
+                child: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: Colors.grey[300]!,
+                    ),
                   ),
-                ),
-                child: IconButton(
-                  onPressed: () {},
-                  icon: const Icon(
+                  child: const Icon(
                     Icons.tune_rounded,
                     color: Colors.black,
                     size: 24,

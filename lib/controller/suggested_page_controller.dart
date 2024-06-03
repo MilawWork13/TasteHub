@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:string_similarity/string_similarity.dart';
 import 'package:taste_hub/controller/services/mongo_db_service.dart';
 import 'package:taste_hub/model/Recipe.dart';
 
@@ -30,11 +31,14 @@ class SuggestedPageController {
       isSearching.value = true;
       searchedRecipes = recipes
           .where((recipe) =>
-              recipe.name.toLowerCase().contains(query.toLowerCase()) ||
-              recipe.creator.toLowerCase() == 'TasteHub')
+              recipe.creator.toLowerCase() == 'tastehub' &&
+              (recipe.name.toLowerCase().startsWith(query.toLowerCase()) ||
+                  recipe.name.toLowerCase().similarityTo(query.toLowerCase()) >
+                      0.7))
           .toList();
     } else {
       isSearching.value = false;
+      searchedRecipes = [];
     }
   }
 

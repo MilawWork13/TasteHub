@@ -52,6 +52,7 @@ dependencies:
   file_picker: ^8.0.3
   flutter_spinkit: ^5.2.1
   cached_network_image: ^3.3.1
+  string_similarity: ^2.0.0
 
 dev_dependencies:
   flutter_test:
@@ -84,9 +85,3 @@ flutter:
     - assets/logo_no_background.png
     - assets/default_food_img.png
     - .env
-
-flutter_native_splash:
-  color: "#3369FF"
-  image: assets/logo.png
-  android: true
-  ios: true

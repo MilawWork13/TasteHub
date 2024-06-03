@@ -32,8 +32,7 @@ class SuggestedPageState extends State<SuggestedPage> {
       body: RefreshIndicator(
         onRefresh: () async {
           await _controller.refreshPage();
-          setState(
-              () {}); // Refresh the UI after fetching new suggested recipes
+          setState(() {});
         },
         child: CustomScrollView(
           slivers: [
@@ -68,7 +67,11 @@ class SuggestedPageState extends State<SuggestedPage> {
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 16),
                 child: SearchBarNiceWidget(
-                  onSearch: _controller.searchRecipes,
+                  onSearch: (query) {
+                    setState(() {
+                      _controller.searchRecipes(query);
+                    });
+                  },
                 ),
               ),
             ),
