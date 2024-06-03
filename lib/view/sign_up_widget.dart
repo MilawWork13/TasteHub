@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:taste_hub/components/custom_back_arrow.dart';
+import 'package:taste_hub/components/custom_appbar.dart';
 import 'package:taste_hub/controller/sign_in_controller.dart';
 import 'package:taste_hub/controller/sign_up_controller.dart';
 

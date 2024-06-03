@@ -1,83 +1,115 @@
 import 'package:flutter/material.dart';
+import 'package:taste_hub/components/cool_search_bar.dart';
+import 'package:taste_hub/components/recipe_card.dart';
+import 'package:taste_hub/controller/services/firebase_storage_service.dart';
+import 'package:taste_hub/controller/suggested_page_controller.dart';
+import 'package:taste_hub/view/recipe_detail_widget.dart';
 
 class SuggestedPage extends StatefulWidget {
   const SuggestedPage({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
-  _SuggestedPageState createState() => _SuggestedPageState();
+  SuggestedPageState createState() => SuggestedPageState();
 }
 
-class _SuggestedPageState extends State<SuggestedPage> {
+class SuggestedPageState extends State<SuggestedPage> {
+  final SuggestedPageController _controller = SuggestedPageController();
+
+  @override
+  void initState() {
+    super.initState();
+    _initializePage();
+  }
+
+  Future<void> _initializePage() async {
+    await _controller.initialize();
+    setState(() {}); // Refresh the UI after initialization
+  }
+
   @override
   Widget build(BuildContext context) {
-    final hour = DateTime.now().hour;
-    String greetingText;
-    String greetingImage;
-
-    if (hour < 12) {
-      greetingText = 'Good Morning!';
-      greetingImage = 'assets/breakfast.jpeg';
-    } else if (hour < 17) {
-      greetingText = 'Good Afternoon!';
-      greetingImage = 'assets/lunch.jpg';
-    } else {
-      greetingText = 'Good Evening!';
-      greetingImage = 'assets/dinner.jpg';
-    }
-
-    final Color backgroundColor = Theme.of(context).scaffoldBackgroundColor;
-
     return Scaffold(
-      body: Column(
-        children: [
-          Stack(
-            children: [
-              Image.asset(
-                greetingImage,
-                width: double.infinity,
-                height: 200, // Adjust height as needed
-                fit: BoxFit.cover,
-              ),
-              Container(
-                width: double.infinity,
-                height: 200, // Match height to the image
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      const Color.fromARGB(0, 255, 255, 255),
-                      backgroundColor.withOpacity(1),
-                    ],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                  ),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await _controller.refreshPage();
+          setState(
+              () {}); // Refresh the UI after fetching new suggested recipes
+        },
+        child: CustomScrollView(
+          slivers: [
+            const SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(24, 40, 16, 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Suggested recipes',
+                      style: TextStyle(
+                        fontFamily: 'Sora',
+                        fontSize: 44,
+                        color: Colors.black,
+                      ),
+                    ),
+                    Text(
+                      'Try new meals everyday! Best options based on your preference.',
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              Positioned(
-                bottom: 15,
-                left: 25,
-                child: Text(
-                  greetingText,
-                  style: const TextStyle(
-                    fontFamily: 'Inter',
-                    fontSize: 32,
-                    fontWeight: FontWeight.w900,
-                    color: Color.fromARGB(255, 0, 0, 0),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          // Add the rest of your page content below the image
-          const Expanded(
-            child: Center(
-              child: Text(
-                'Main content here',
-                style: TextStyle(fontSize: 18),
               ),
             ),
-          ),
-        ],
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: SearchBarNiceWidget(
+                  onSearch: _controller.searchRecipes,
+                ),
+              ),
+            ),
+            ValueListenableBuilder<bool>(
+              valueListenable: _controller.isSearching,
+              builder: (context, isSearching, _) {
+                final recipesToDisplay = isSearching
+                    ? _controller.searchedRecipes
+                    : _controller.suggestedRecipes;
+
+                return SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (BuildContext context, int index) {
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => RecipeDetailScreen(
+                                recipe: recipesToDisplay[index],
+                                firebaseStorageService:
+                                    FirebaseStorageService(),
+                                mongoDBService: _controller.mongoDBService,
+                              ),
+                            ),
+                          );
+                        },
+                        child: RecipeCard(
+                          recipe: recipesToDisplay[index],
+                          firebaseStorageService: FirebaseStorageService(),
+                          mongoDBService: _controller.mongoDBService,
+                        ),
+                      );
+                    },
+                    childCount: recipesToDisplay.length,
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

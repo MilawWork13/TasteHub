@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart'
     as smooth_page_indicator;
-import 'package:taste_hub/components/custom_back_arrow.dart';
+import 'package:taste_hub/components/custom_appbar.dart';
 import 'package:taste_hub/components/on_boarding_slide.dart';
 
 class OnboardingSlideshowWidget extends StatefulWidget {

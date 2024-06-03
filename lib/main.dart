@@ -1,4 +1,5 @@
 import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -24,7 +25,6 @@ void main() async {
 
   // Activate Firebase App Check
   await FirebaseAppCheck.instance.activate(
-    // You can specify your preferred providers here
     webProvider: ReCaptchaV3Provider('recaptcha-v3-site-key'),
     androidProvider: AndroidProvider.debug,
     appleProvider: AppleProvider.appAttest,
@@ -38,6 +38,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    authUser();
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'TasteHUB',
@@ -51,5 +52,16 @@ class MyApp extends StatelessWidget {
         '/onboarding': (context) => const OnboardingSlideshowWidget(),
       },
     );
+  }
+
+  authUser() {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      // User is authenticated
+      print('User is authenticated: ${user.uid}');
+    } else {
+      // User is not authenticated
+      print('User is not authenticated');
+    }
   }
 }
