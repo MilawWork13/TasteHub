@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:taste_hub/components/cool_search_bar.dart';
+import 'package:taste_hub/components/culture_card.dart';
 import 'package:taste_hub/components/recipe_card.dart';
 import 'package:taste_hub/controller/services/firebase_storage_service.dart';
 import 'package:taste_hub/controller/suggested_page_controller.dart';
+import 'package:taste_hub/model/Culture.dart';
+import 'package:taste_hub/model/Recipe.dart';
 import 'package:taste_hub/view/recipe_detail_widget.dart';
 
 class SuggestedPage extends StatefulWidget {
@@ -23,7 +26,6 @@ class SuggestedPageState extends State<SuggestedPage> {
 
   Future<void> _initializePage() async {
     await _controller.initialize();
-    setState(() {}); // Refresh the UI after initialization
   }
 
   @override
@@ -32,13 +34,12 @@ class SuggestedPageState extends State<SuggestedPage> {
       body: RefreshIndicator(
         onRefresh: () async {
           await _controller.refreshPage();
-          setState(() {});
         },
         child: CustomScrollView(
           slivers: [
             const SliverToBoxAdapter(
               child: Padding(
-                padding: EdgeInsets.fromLTRB(24, 40, 16, 16),
+                padding: EdgeInsets.fromLTRB(24, 48, 16, 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -68,9 +69,39 @@ class SuggestedPageState extends State<SuggestedPage> {
                 padding: const EdgeInsets.only(bottom: 16),
                 child: SearchBarNiceWidget(
                   onSearch: (query) {
-                    setState(() {
-                      _controller.searchRecipes(query);
-                    });
+                    _controller.searchRecipes(query);
+                  },
+                ),
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: SizedBox(
+                height: 95,
+                child: ValueListenableBuilder<List<Culture>>(
+                  valueListenable: _controller.cultures,
+                  builder: (context, cultures, _) {
+                    return ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: cultures.length,
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: () async {
+                            String cultureId = cultures[index].id.toString();
+                            cultureId = cultureId
+                                .replaceAll('ObjectId("', '')
+                                .replaceAll('")', '');
+                            await _controller.showRecipesByCulture(cultureId);
+                          },
+                          child: CultureCard(
+                            culture: cultures[index],
+                            firebaseStorageService: FirebaseStorageService(),
+                            mongoDBService: _controller.mongoDBService,
+                            isFirstCard: index == 0,
+                            isLastCard: index == cultures.length - 1,
+                          ),
+                        );
+                      },
+                    );
                   },
                 ),
               ),
@@ -78,36 +109,56 @@ class SuggestedPageState extends State<SuggestedPage> {
             ValueListenableBuilder<bool>(
               valueListenable: _controller.isSearching,
               builder: (context, isSearching, _) {
-                final recipesToDisplay = isSearching
-                    ? _controller.searchedRecipes
-                    : _controller.suggestedRecipes;
-
-                return SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (BuildContext context, int index) {
-                      return GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => RecipeDetailScreen(
-                                recipe: recipesToDisplay[index],
-                                firebaseStorageService:
-                                    FirebaseStorageService(),
-                                mongoDBService: _controller.mongoDBService,
+                return ValueListenableBuilder<List<Recipe>>(
+                  valueListenable: isSearching
+                      ? _controller.searchedRecipes
+                      : _controller.suggestedRecipes,
+                  builder: (context, recipesToDisplay, _) {
+                    if (recipesToDisplay.isEmpty) {
+                      return const SliverToBoxAdapter(
+                        child: Center(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 120),
+                            child: Text(
+                              'No recipes were found',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.grey,
                               ),
+                            ),
+                          ),
+                        ),
+                      );
+                    }
+                    return SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (BuildContext context, int index) {
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => RecipeDetailScreen(
+                                    recipe: recipesToDisplay[index],
+                                    firebaseStorageService:
+                                        FirebaseStorageService(),
+                                    mongoDBService: _controller.mongoDBService,
+                                  ),
+                                ),
+                              );
+                            },
+                            child: RecipeCard(
+                              recipe: recipesToDisplay[index],
+                              firebaseStorageService: FirebaseStorageService(),
+                              mongoDBService: _controller.mongoDBService,
+                              isFirstCard: index == 0,
                             ),
                           );
                         },
-                        child: RecipeCard(
-                          recipe: recipesToDisplay[index],
-                          firebaseStorageService: FirebaseStorageService(),
-                          mongoDBService: _controller.mongoDBService,
-                        ),
-                      );
-                    },
-                    childCount: recipesToDisplay.length,
-                  ),
+                        childCount: recipesToDisplay.length,
+                      ),
+                    );
+                  },
                 );
               },
             ),

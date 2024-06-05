@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:taste_hub/components/favourite_button.dart';
@@ -9,44 +10,42 @@ class RecipeCard extends StatelessWidget {
   final Recipe recipe;
   final FirebaseStorageService firebaseStorageService;
   final MongoDBService mongoDBService;
+  final bool isFirstCard;
 
   const RecipeCard({
     super.key,
     required this.recipe,
     required this.firebaseStorageService,
     required this.mongoDBService,
+    this.isFirstCard = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<String>(
-      future: firebaseStorageService.downloadURL(recipe.image),
+      future: firebaseStorageService.downloadRecipeImageURL(recipe.image),
       builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
         if (snapshot.connectionState == ConnectionState.done &&
             snapshot.hasData) {
-          // If image URL is available, display the image
           return Padding(
-            padding: const EdgeInsets.symmetric(
-                horizontal: 16.0, vertical: 2.0), // Add vertical padding
+            padding: EdgeInsets.only(
+                left: 16.0, right: 16.0, top: isFirstCard ? 8.0 : 0),
             child: SizedBox(
-              height: 300, // Adjust the height of the card as needed
+              height: 300,
               child: Card(
                 elevation: 4,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(32),
                 ),
                 child: ClipRRect(
-                  // Clip the image with rounded corners
                   borderRadius: BorderRadius.circular(32),
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
-                      // Image
-                      Image.network(
-                        snapshot.data!,
+                      CachedNetworkImage(
+                        imageUrl: snapshot.data!,
                         fit: BoxFit.cover,
                       ),
-                      // Gradient overlay
                       Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(32),
@@ -60,7 +59,6 @@ class RecipeCard extends StatelessWidget {
                           ),
                         ),
                       ),
-                      // Text overlay
                       Positioned(
                         bottom: 16,
                         left: 16,
@@ -100,14 +98,13 @@ class RecipeCard extends StatelessWidget {
                                     ),
                                   );
                                 } else {
-                                  return Container(); // Return an empty container if culture data is not available yet
+                                  return Container();
                                 }
                               },
                             ),
                           ],
                         ),
                       ),
-                      // Heart icon
                       Positioned(
                         top: 12,
                         right: -8,
@@ -125,15 +122,12 @@ class RecipeCard extends StatelessWidget {
             ),
           );
         } else {
-          // Placeholder or loading animation while image is being fetched
           return const SizedBox(
             height: 300,
             child: Center(
               child: SpinKitFadingCircle(
-                // Use any animation from flutter_spinkit package
-                color: Color.fromARGB(
-                    255, 255, 71, 71), // Customize the color if needed
-                size: 50.0, // Adjust the size of the animation
+                color: Color.fromARGB(255, 255, 71, 71),
+                size: 50.0,
               ),
             ),
           );

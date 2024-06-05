@@ -2,6 +2,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 import 'package:taste_hub/model/Recipe.dart';
 import 'package:taste_hub/model/User.dart';
+import 'package:taste_hub/model/Culture.dart';
 
 class MongoDBService {
   final Db _db;
@@ -64,6 +65,20 @@ class MongoDBService {
     }
   }
 
+  Future<List<Culture>> getAllCultures() async {
+    try {
+      final cultures = await _culturesCollection.find().toList();
+      if (cultures.isNotEmpty) {
+        return cultures.map((json) => Culture.fromJson(json)).toList();
+      } else {
+        return [];
+      }
+    } catch (e) {
+      print('Error fetching cultures: $e');
+      return [];
+    }
+  }
+
   Future<List<Recipe>> searchRecipes(String searchText) async {
     try {
       final query = where.or([
@@ -78,6 +93,22 @@ class MongoDBService {
       }
     } catch (e) {
       print('Error searching recipes: $e');
+      return [];
+    }
+  }
+
+  Future<List<Recipe>> getRecipesByCultureId(String cultureId) async {
+    try {
+      final query = where.eq('culture',
+          cultureId); // Adjust the query based on your MongoDB schema
+      final recipes = await _recipesCollection.find(query).toList();
+      if (recipes.isNotEmpty) {
+        return recipes.map((json) => Recipe.fromJson(json)).toList();
+      } else {
+        return [];
+      }
+    } catch (e) {
+      print('Error fetching recipes by culture ID: $e');
       return [];
     }
   }

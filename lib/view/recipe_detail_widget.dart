@@ -41,7 +41,7 @@ class RecipeDetailScreenState extends State<RecipeDetailScreen> {
                   children: [
                     FutureBuilder<String>(
                       future: widget.firebaseStorageService
-                          .downloadURL(widget.recipe.image),
+                          .downloadRecipeImageURL(widget.recipe.image),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.done &&
                             snapshot.hasData) {

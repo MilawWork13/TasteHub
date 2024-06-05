@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:taste_hub/components/filters_for_search.dart';
 
 class SearchBarNiceWidget extends StatelessWidget {
   final Function(String) onSearch;

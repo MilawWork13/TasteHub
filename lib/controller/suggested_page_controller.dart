@@ -1,35 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:string_similarity/string_similarity.dart';
 import 'package:taste_hub/controller/services/mongo_db_service.dart';
+import 'package:taste_hub/model/Culture.dart';
 import 'package:taste_hub/model/Recipe.dart';
 
 class SuggestedPageController {
   late final MongoDBService mongoDBService;
-  late List<Recipe> recipes = [];
-  late List<Recipe> suggestedRecipes = [];
-  late List<Recipe> searchedRecipes = [];
-  final isSearching = ValueNotifier<bool>(false);
+  List<Recipe> allRecipes = [];
+  final ValueNotifier<List<Culture>> cultures = ValueNotifier([]);
+  final ValueNotifier<List<Recipe>> suggestedRecipes = ValueNotifier([]);
+  final ValueNotifier<List<Recipe>> searchedRecipes = ValueNotifier([]);
+  final ValueNotifier<bool> isSearching = ValueNotifier(false);
 
   Future<void> initialize() async {
     mongoDBService = await MongoDBService.create();
+    await fetchAllCultures();
     await fetchAllRecipes();
   }
 
   Future<void> fetchAllRecipes() async {
-    recipes = await mongoDBService.getAllRecipes();
-    recipes.shuffle(); // Shuffle all recipes
-    suggestedRecipes =
-        recipes.take(6).toList(); // Take the first 6 shuffled recipes
+    try {
+      allRecipes = await mongoDBService.getAllRecipes();
+      allRecipes.shuffle(); // Shuffle all recipes
+      suggestedRecipes.value =
+          allRecipes.take(6).toList(); // Take the first 6 shuffled recipes
+    } catch (e) {
+      print('Error fetching recipes: $e');
+    }
   }
 
   Future<void> refreshPage() async {
     await fetchAllRecipes();
   }
 
-  void searchRecipes(String query) async {
+  void searchRecipes(String query) {
     if (query.isNotEmpty) {
       isSearching.value = true;
-      searchedRecipes = recipes
+      searchedRecipes.value = allRecipes
           .where((recipe) =>
               recipe.creator.toLowerCase() == 'tastehub' &&
               (recipe.name.toLowerCase().startsWith(query.toLowerCase()) ||
@@ -38,7 +45,25 @@ class SuggestedPageController {
           .toList();
     } else {
       isSearching.value = false;
-      searchedRecipes = [];
+      searchedRecipes.value = [];
+    }
+  }
+
+  Future<void> showRecipesByCulture(String cultureId) async {
+    try {
+      isSearching.value = true;
+      searchedRecipes.value =
+          await mongoDBService.getRecipesByCultureId(cultureId);
+    } catch (e) {
+      print('Error fetching recipes by culture: $e');
+    }
+  }
+
+  Future<void> fetchAllCultures() async {
+    try {
+      cultures.value = await mongoDBService.getAllCultures();
+    } catch (e) {
+      print('Error fetching cultures: $e');
     }
   }
 

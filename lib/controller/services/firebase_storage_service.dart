@@ -23,7 +23,7 @@ class FirebaseStorageService {
     }
   }
 
-  Future<String> downloadURL(String imageName) async {
+  Future<String> downloadRecipeImageURL(String imageName) async {
     try {
       // Ensure user is authenticated
       User? user = _auth.currentUser;
@@ -31,6 +31,24 @@ class FirebaseStorageService {
         throw Exception('User is not authenticated');
       } else {
         String path = 'recipe_images/$imageName';
+        String downloadURL = await _storage.ref(path).getDownloadURL();
+        return downloadURL;
+      }
+    } catch (e) {
+      return await _storage
+          .ref('recipe_images/default_food_img.png')
+          .getDownloadURL();
+    }
+  }
+
+  Future<String> downloadCultureImageURL(String imageName) async {
+    try {
+      // Ensure user is authenticated
+      User? user = _auth.currentUser;
+      if (user == null) {
+        throw Exception('User is not authenticated');
+      } else {
+        String path = 'culture_images/$imageName';
         String downloadURL = await _storage.ref(path).getDownloadURL();
         return downloadURL;
       }
