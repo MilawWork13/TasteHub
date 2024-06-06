@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:taste_hub/components/cool_search_bar.dart';
 import 'package:taste_hub/components/culture_card.dart';
@@ -26,6 +27,10 @@ class SuggestedPageState extends State<SuggestedPage> {
 
   Future<void> _initializePage() async {
     await _controller.initialize();
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      await _controller.fetchFavoriteRecipes(user.email!);
+    }
   }
 
   @override
@@ -133,6 +138,8 @@ class SuggestedPageState extends State<SuggestedPage> {
                     return SliverList(
                       delegate: SliverChildBuilderDelegate(
                         (BuildContext context, int index) {
+                          bool isFavourite = _controller.favouriteRecipes.value
+                              .contains(recipesToDisplay[index]);
                           return GestureDetector(
                             onTap: () {
                               Navigator.push(
@@ -143,6 +150,7 @@ class SuggestedPageState extends State<SuggestedPage> {
                                     firebaseStorageService:
                                         FirebaseStorageService(),
                                     mongoDBService: _controller.mongoDBService,
+                                    isFavourite: isFavourite,
                                   ),
                                 ),
                               );
@@ -152,6 +160,7 @@ class SuggestedPageState extends State<SuggestedPage> {
                               firebaseStorageService: FirebaseStorageService(),
                               mongoDBService: _controller.mongoDBService,
                               isFirstCard: index == 0,
+                              isFavourite: isFavourite,
                             ),
                           );
                         },

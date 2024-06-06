@@ -40,7 +40,6 @@ class SignInController {
         showErrorToast(context, message: 'Google sign-in aborted.');
         return;
       }
-
       GoogleSignInAuthentication? googleAuth = await googleUser.authentication;
 
       AuthCredential credential = GoogleAuthProvider.credential(
@@ -77,12 +76,11 @@ class SignInController {
 
           await mongoDBService.createUser(newUser);
         }
-
         await mongoDBService.disconnect();
-
         // ignore: use_build_context_synchronously
-        Navigator.of(context).pushNamed('/home');
       }
+      // ignore: use_build_context_synchronously
+      Navigator.of(context).pushNamed('/home');
     } catch (e) {
       // ignore: use_build_context_synchronously
       showErrorToast(context,
@@ -90,10 +88,16 @@ class SignInController {
     }
   }
 
-  logout(BuildContext context) async {
-    await GoogleSignIn().signOut();
-    await FirebaseAuth.instance.signOut();
-    // ignore: use_build_context_synchronously
-    Navigator.pushNamed(context, '/sign_in');
+  Future<void> logout(BuildContext context) async {
+    try {
+      await FirebaseAuth.instance.signOut();
+      await GoogleSignIn().signOut();
+      // ignore: use_build_context_synchronously
+      Navigator.pushNamedAndRemoveUntil(context, '/sign_in', (route) => false);
+    } catch (e) {
+      // Handle any errors that occur during sign-out
+      print("Error signing out: $e");
+      // Optionally, you could show a dialog or a snackbar to inform the user
+    }
   }
 }

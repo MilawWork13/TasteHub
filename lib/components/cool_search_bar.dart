@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
 
-class SearchBarNiceWidget extends StatelessWidget {
+class SearchBarNiceWidget extends StatefulWidget {
   final Function(String) onSearch;
 
   const SearchBarNiceWidget({
     super.key,
     required this.onSearch,
   });
+
+  @override
+  SearchBarNiceWidgetState createState() => SearchBarNiceWidgetState();
+}
+
+class SearchBarNiceWidgetState extends State<SearchBarNiceWidget> {
+  final TextEditingController _controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +48,8 @@ class SearchBarNiceWidget extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: TextField(
-                  onChanged: onSearch,
+                  controller: _controller,
+                  onChanged: widget.onSearch,
                   decoration: const InputDecoration(
                     labelText: 'Search recipes...',
                     labelStyle: TextStyle(
@@ -71,7 +79,11 @@ class SearchBarNiceWidget extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  // Clear the search text and trigger search
+                  widget.onSearch('');
+                  _controller.clear(); // Clear the text field visually
+                },
                 child: Container(
                   width: 40,
                   height: 40,
@@ -83,7 +95,7 @@ class SearchBarNiceWidget extends StatelessWidget {
                     ),
                   ),
                   child: const Icon(
-                    Icons.tune_rounded,
+                    Icons.clear,
                     color: Colors.black,
                     size: 24,
                   ),

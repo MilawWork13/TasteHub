@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:taste_hub/components/custom_arrowback.dart';
@@ -11,12 +12,14 @@ class RecipeDetailScreen extends StatefulWidget {
   final Recipe recipe;
   final FirebaseStorageService firebaseStorageService;
   final MongoDBService mongoDBService;
+  final bool isFavourite;
 
   const RecipeDetailScreen({
     super.key,
     required this.recipe,
     required this.firebaseStorageService,
     required this.mongoDBService,
+    required this.isFavourite,
   });
 
   @override
@@ -24,10 +27,9 @@ class RecipeDetailScreen extends StatefulWidget {
 }
 
 class RecipeDetailScreenState extends State<RecipeDetailScreen> {
-  bool isFavorite = false;
-
   @override
   Widget build(BuildContext context) {
+    User? user = FirebaseAuth.instance.currentUser;
     return DefaultTabController(
       length: 3,
       child: Scaffold(
@@ -74,11 +76,30 @@ class RecipeDetailScreenState extends State<RecipeDetailScreen> {
                         onBackButtonPressed: () => Navigator.of(context).pop(),
                       ),
                     ),
-                    const Align(
+                    Align(
                       alignment: Alignment.topRight,
                       child: Padding(
-                        padding: EdgeInsets.only(top: 40.0),
-                        child: FavoriteButton(),
+                        padding: const EdgeInsets.only(top: 40.0),
+                        child: FavoriteButton(
+                          isFavorite: widget.isFavourite,
+                          onFavoriteChanged: (isNowFavorite) {
+                            if (isNowFavorite) {
+                              widget.mongoDBService.addRecipeToFavorites(
+                                  user?.email ?? '',
+                                  widget.recipe.id
+                                      .toString()
+                                      .replaceAll('ObjectId("', '')
+                                      .replaceAll('")', ''));
+                            } else {
+                              widget.mongoDBService.removeRecipeFromFavorites(
+                                  user?.email ?? '',
+                                  widget.recipe.id
+                                      .toString()
+                                      .replaceAll('ObjectId("', '')
+                                      .replaceAll('")', ''));
+                            }
+                          },
+                        ),
                       ),
                     ),
                   ],
@@ -95,11 +116,10 @@ class RecipeDetailScreenState extends State<RecipeDetailScreen> {
                       children: [
                         // Name and additional information
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // Recipe name
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.7,
+                            Expanded(
                               child: Text(
                                 widget.recipe.name,
                                 style: const TextStyle(
@@ -115,23 +135,28 @@ class RecipeDetailScreenState extends State<RecipeDetailScreen> {
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     const Icon(
                                       Icons.timer,
-                                      color: Colors.blue,
+                                      color: Colors.red,
                                       size: 20,
                                     ),
                                     const SizedBox(width: 4),
                                     Text(
                                       '${widget.recipe.preparationTime} min',
                                       style: const TextStyle(fontSize: 16),
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ],
                                 ),
-                                Text(
-                                  'Cost: \$${widget.recipe.price.toStringAsFixed(2)}',
-                                  style: const TextStyle(fontSize: 16),
+                                Row(
+                                  children: [
+                                    Text(
+                                      'Cost: \$${widget.recipe.price.toStringAsFixed(2)}',
+                                      style: const TextStyle(fontSize: 16),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
@@ -169,16 +194,21 @@ class RecipeDetailScreenState extends State<RecipeDetailScreen> {
                         const SizedBox(height: 16),
                         // Tab Bar
                         const TabBar(
-                          labelColor: Colors.blue,
+                          labelColor: Colors.red,
                           unselectedLabelColor: Colors.grey,
+                          indicator: UnderlineTabIndicator(
+                            borderSide:
+                                BorderSide(color: Colors.red, width: 4.0),
+                          ),
                           tabs: [
                             Tab(text: 'Ingredients'),
                             Tab(text: 'Instructions'),
                             Tab(text: 'Info'),
                           ],
                         ),
-                        // Tab Bar View
+                        // Tab Bar View wrapped in SingleChildScrollView
                         SingleChildScrollView(
+                          physics: const NeverScrollableScrollPhysics(),
                           child: SizedBox(
                             height: calculateHeight(),
                             child: TabBarView(
@@ -317,9 +347,14 @@ class RecipeDetailScreenState extends State<RecipeDetailScreen> {
   }
 
   double calculateHeight() {
-    return ((widget.recipe.ingredients.length +
+    double minHeight = 300;
+    double height = ((widget.recipe.ingredients.length +
                 widget.recipe.instructions.length) /
             2) *
         85;
+    if (minHeight > height) {
+      height = minHeight;
+    } else {}
+    return height;
   }
 }

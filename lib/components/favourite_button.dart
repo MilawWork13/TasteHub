@@ -2,14 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:taste_hub/components/toast.dart';
 
 class FavoriteButton extends StatefulWidget {
-  const FavoriteButton({super.key});
+  final bool isFavorite;
+  final Function(bool) onFavoriteChanged;
+
+  const FavoriteButton({
+    super.key,
+    required this.isFavorite,
+    required this.onFavoriteChanged,
+  });
 
   @override
   FavoriteButtonState createState() => FavoriteButtonState();
 }
 
 class FavoriteButtonState extends State<FavoriteButton> {
-  bool isFavorite = false;
+  late bool isFavorite;
+
+  @override
+  void initState() {
+    super.initState();
+    isFavorite = widget.isFavorite;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,6 +31,7 @@ class FavoriteButtonState extends State<FavoriteButton> {
         setState(() {
           isFavorite = !isFavorite;
         });
+        widget.onFavoriteChanged(isFavorite);
         showSuccessToast(
           context,
           message: isFavorite

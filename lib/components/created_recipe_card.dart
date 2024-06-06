@@ -2,25 +2,25 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:taste_hub/components/favourite_button.dart';
+import 'package:taste_hub/components/delete_recipe_button.dart';
 import 'package:taste_hub/controller/services/firebase_storage_service.dart';
 import 'package:taste_hub/controller/services/mongo_db_service.dart';
 import 'package:taste_hub/model/Recipe.dart';
 
-class RecipeCard extends StatelessWidget {
+class CreatedRecipeCard extends StatelessWidget {
   final Recipe recipe;
   final FirebaseStorageService firebaseStorageService;
   final MongoDBService mongoDBService;
   final bool isFirstCard;
-  final bool isFavourite;
+  final Function onRecipeDeleted;
 
-  const RecipeCard({
+  const CreatedRecipeCard({
     super.key,
     required this.recipe,
     required this.firebaseStorageService,
     required this.mongoDBService,
     this.isFirstCard = false,
-    required this.isFavourite,
+    required this.onRecipeDeleted,
   });
 
   @override
@@ -33,7 +33,10 @@ class RecipeCard extends StatelessWidget {
             snapshot.hasData) {
           return Padding(
             padding: EdgeInsets.only(
-                left: 16.0, right: 16.0, top: isFirstCard ? 8.0 : 0),
+              left: 16.0,
+              right: 16.0,
+              top: isFirstCard ? 8.0 : 0,
+            ),
             child: SizedBox(
               height: 300,
               child: Card(
@@ -112,24 +115,17 @@ class RecipeCard extends StatelessWidget {
                       Positioned(
                         top: 12,
                         right: -8,
-                        child: FavoriteButton(
-                          isFavorite: isFavourite,
-                          onFavoriteChanged: (isNowFavorite) {
-                            if (isNowFavorite) {
-                              mongoDBService.addRecipeToFavorites(
-                                  user?.email ?? '',
-                                  recipe.id
-                                      .toString()
-                                      .replaceAll('ObjectId("', '')
-                                      .replaceAll('")', ''));
-                            } else {
-                              mongoDBService.removeRecipeFromFavorites(
-                                  user?.email ?? '',
-                                  recipe.id
-                                      .toString()
-                                      .replaceAll('ObjectId("', '')
-                                      .replaceAll('")', ''));
-                            }
+                        child: DeleteRecipeButton(
+                          onDelete: () async {
+                            await mongoDBService.deleteRecipe(
+                                context,
+                                user?.email ?? '',
+                                recipe.id
+                                    .toString()
+                                    .replaceAll('ObjectId("', '')
+                                    .replaceAll('")', ''),
+                                recipe.image);
+                            onRecipeDeleted();
                           },
                         ),
                       ),

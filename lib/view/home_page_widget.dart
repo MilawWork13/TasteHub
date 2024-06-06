@@ -31,7 +31,7 @@ class _HomePageState extends State<HomePage> {
 
   final List<Widget> _pages = <Widget>[
     const SuggestedPage(),
-    const YourRecipesPage(),
+    const FavoriteRecipesPage(),
     const AiChatPage(),
     const ProfilePage(),
   ];
@@ -45,10 +45,9 @@ class _HomePageState extends State<HomePage> {
           return;
         }
         final bool shouldLogout = await _showLogoutDialog() ?? false;
-        if (context.mounted && shouldLogout) {
-          await FirebaseAuth.instance.signOut();
+        if (shouldLogout) {
           // ignore: use_build_context_synchronously
-          Navigator.pushNamed(context, '/sign_in');
+          await _signInController.logout(context);
         }
       },
       child: Scaffold(
@@ -107,7 +106,7 @@ class _HomePageState extends State<HomePage> {
               child: const Text('No'),
             ),
             TextButton(
-              onPressed: () => _signInController.logout(context),
+              onPressed: () => Navigator.of(context).pop(true),
               child: const Text('Yes'),
             ),
           ],
