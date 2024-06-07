@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:taste_hub/controller/services/mongo_db_service.dart';
+import 'package:taste_hub/model/User.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -30,8 +32,19 @@ class SplashScreenState extends State<SplashScreen> {
   void checkAuthStatus() async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      // User is signed in. Navigate to home.
-      Navigator.of(context).pushReplacementNamed('/home');
+      // Get user role from the database
+      MongoDBService mongoService = await MongoDBService.create();
+      UserModel? userModel = await mongoService.getUserByEmail(user.email!);
+      await mongoService.disconnect();
+
+      // Navigate based on user role
+      if (userModel != null && userModel.role == 'admin') {
+        // User is an admin. Navigate to admin page.
+        Navigator.of(context).pushReplacementNamed('/admin_page');
+      } else {
+        // User is not an admin. Navigate to home.
+        Navigator.of(context).pushReplacementNamed('/home');
+      }
     } else {
       // No user signed in. Navigate to get_started.
       Navigator.of(context).pushReplacementNamed('/get_started');

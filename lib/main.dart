@@ -2,6 +2,7 @@ import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:taste_hub/view/admin_home_page_widget.dart';
 import 'package:taste_hub/view/home_page_widget.dart';
 import 'package:taste_hub/view/sign_up_widget.dart';
 import 'package:taste_hub/view/sign_in_widget.dart';
@@ -45,6 +46,7 @@ class MyApp extends StatelessWidget {
         '/splash': (context) => const SplashScreen(),
         '/home': (context) => const HomePage(),
         '/get_started': (context) => const GetStartedWidget(),
+        '/admin_page': (context) => const AdminHomePage(),
         '/sign_in': (context) => const SignInWidget(),
         '/register': (context) => const RegisterWidget(),
         '/onboarding': (context) => const OnboardingSlideshowWidget(),

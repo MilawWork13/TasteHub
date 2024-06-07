@@ -6,7 +6,7 @@ import 'package:taste_hub/components/recipe_card.dart';
 import 'package:taste_hub/controller/services/firebase_storage_service.dart';
 import 'package:taste_hub/controller/suggested_page_controller.dart';
 import 'package:taste_hub/model/Recipe.dart';
-import 'package:taste_hub/view/create_your_recipe.dart';
+import 'package:taste_hub/view/create_your_recipe_widget.dart';
 import 'package:taste_hub/view/recipe_detail_widget.dart';
 
 class FavoriteRecipesPage extends StatefulWidget {

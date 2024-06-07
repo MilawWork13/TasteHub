@@ -22,8 +22,19 @@ class SignInController {
           await _auth.signInWithEmailAndPassword(context, email, password);
 
       if (user != null) {
-        // ignore: use_build_context_synchronously
-        Navigator.pushNamed(context, "/home");
+        // Check user's role
+        MongoDBService mongoService = await MongoDBService.create();
+        UserModel? userModel = await mongoService.getUserByEmail(user.email!);
+        await mongoService.disconnect();
+
+        // Navigate based on user's role
+        if (userModel != null && userModel.role == 'admin') {
+          // ignore: use_build_context_synchronously
+          Navigator.pushNamed(context, '/admin_page');
+        } else {
+          // ignore: use_build_context_synchronously
+          Navigator.pushNamed(context, '/home');
+        }
       }
     } catch (e) {
       // ignore: use_build_context_synchronously
@@ -78,9 +89,14 @@ class SignInController {
         }
         await mongoDBService.disconnect();
         // ignore: use_build_context_synchronously
+        if (existingUser != null && existingUser.role == 'admin') {
+          // ignore: use_build_context_synchronously
+          Navigator.pushNamed(context, '/admin_page');
+        } else {
+          // ignore: use_build_context_synchronously
+          Navigator.pushNamed(context, '/home');
+        }
       }
-      // ignore: use_build_context_synchronously
-      Navigator.of(context).pushNamed('/home');
     } catch (e) {
       // ignore: use_build_context_synchronously
       showErrorToast(context,

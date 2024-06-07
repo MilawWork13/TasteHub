@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:taste_hub/components/delete_recipe_button.dart';
+import 'package:taste_hub/components/modify_recipe_button.dart';
 import 'package:taste_hub/controller/services/firebase_storage_service.dart';
 import 'package:taste_hub/controller/services/mongo_db_service.dart';
 import 'package:taste_hub/model/Recipe.dart';
@@ -114,19 +115,37 @@ class CreatedRecipeCard extends StatelessWidget {
                       ),
                       Positioned(
                         top: 12,
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: ModifyRecipeButton(
+                            onModify: () {
+                              // Handle edit action
+                            },
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        top: 12,
                         right: -8,
-                        child: DeleteRecipeButton(
-                          onDelete: () async {
-                            await mongoDBService.deleteRecipe(
-                                context,
-                                user?.email ?? '',
-                                recipe.id
-                                    .toString()
-                                    .replaceAll('ObjectId("', '')
-                                    .replaceAll('")', ''),
-                                recipe.image);
-                            onRecipeDeleted();
-                          },
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            // DeleteRecipeButton widget
+                            DeleteRecipeButton(
+                              onDelete: () async {
+                                await mongoDBService.deleteRecipe(
+                                  context,
+                                  user?.email ?? '',
+                                  recipe.id
+                                      .toString()
+                                      .replaceAll('ObjectId("', '')
+                                      .replaceAll('")', ''),
+                                  recipe.image,
+                                );
+                                onRecipeDeleted();
+                              },
+                            ),
+                          ],
                         ),
                       ),
                     ],
