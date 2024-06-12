@@ -23,22 +23,19 @@ class OnboardingSlide extends StatelessWidget {
         left: paddingHorizontal,
         right: paddingHorizontal,
         top: paddingVertical,
-        bottom: paddingVertical + 100, // Added extra padding to the bottom
+        bottom: paddingVertical + 100,
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Title Text at the top
           Text(
             title,
             style: const TextStyle(fontSize: 40),
             textAlign: TextAlign.center,
           ),
-          // Image in the middle
           Expanded(
             child: Image.asset(imageUrl),
           ),
-          // Description Text at the bottom
           Text(
             description,
             style: const TextStyle(fontSize: 16, color: Colors.grey),

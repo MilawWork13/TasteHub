@@ -4,20 +4,19 @@ class ModifyRecipeButton extends StatefulWidget {
   final Function() onModify;
 
   const ModifyRecipeButton({
-    Key? key,
+    super.key,
     required this.onModify,
-  }) : super(key: key);
+  });
 
   @override
-  _ModifyRecipeButtonState createState() => _ModifyRecipeButtonState();
+  ModifyRecipeButtonState createState() => ModifyRecipeButtonState();
 }
 
-class _ModifyRecipeButtonState extends State<ModifyRecipeButton> {
+class ModifyRecipeButtonState extends State<ModifyRecipeButton> {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
-        // Show a dialog or navigate to the modify recipe screen
         widget.onModify();
       },
       style: ElevatedButton.styleFrom(

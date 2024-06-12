@@ -5,6 +5,7 @@ import 'package:taste_hub/components/toast.dart';
 class FirebaseAuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  // Sign up with email and password
   Future<User?> signUpWithEmailAndPassword(
       BuildContext context, String email, String password) async {
     try {
@@ -19,6 +20,7 @@ class FirebaseAuthService {
     return null;
   }
 
+  // Sign in with email and password
   Future<User?> signInWithEmailAndPassword(
       BuildContext context, String email, String password) async {
     try {
@@ -33,6 +35,7 @@ class FirebaseAuthService {
     return null;
   }
 
+  // Handle exceptions showing a toast message
   void handleAuthException(BuildContext context, FirebaseAuthException e) {
     String message;
     switch (e.code) {

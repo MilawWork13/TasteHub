@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+import 'package:mongo_dart/mongo_dart.dart';
 import 'package:taste_hub/controller/services/mongo_db_service.dart';
 
 class ProfilePageController {
@@ -7,27 +9,33 @@ class ProfilePageController {
     initialize();
   }
 
+  // Initialize the MongoDB service
   Future<void> initialize() async {
     mongoDBService = await MongoDBService.create();
   }
 
-  Future<bool> saveReport(
-      String email, String name, String reportDescription) async {
+  // Save the bug report to the database
+  Future<bool> saveReport(int reportNum, String email, String name,
+      String reportDescription, String status) async {
     try {
-      // Call your MongoDBService method to save the bug report
-      // Assuming the MongoDBService method returns a boolean indicating success
       await mongoDBService.storeBugReport(
+          id: ObjectId(),
+          reportNum: reportNum,
           email: email,
           name: name,
           reportDescription: reportDescription,
-          date: _getCurrentDate());
+          date: _getCurrentDate(),
+          status: status);
       return true; // Report saved successfully
     } catch (e) {
-      print('Error saving bug report: $e');
+      if (kDebugMode) {
+        print('Error saving bug report: $e');
+      }
       return false; // Failed to save report
     }
   }
 
+  // Get the current date in the format 'YYYY-MM-DD'
   String _getCurrentDate() {
     DateTime now = DateTime.now();
     return '${now.year}-${now.month}-${now.day}';

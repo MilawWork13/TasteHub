@@ -14,9 +14,10 @@ class _RegisterWidgetState extends State<RegisterWidget> {
   final SignInController _signInController = SignInController();
   final SignUpController _signUpController = SignUpController();
   bool isSigningUp = false;
-  TextEditingController _usernameController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  bool isSigningUpWithGoogle = false;
+  late TextEditingController _usernameController;
+  late TextEditingController _emailController;
+  late TextEditingController _passwordController;
 
   @override
   void initState() {
@@ -65,78 +66,13 @@ class _RegisterWidgetState extends State<RegisterWidget> {
               ],
             ),
             const SizedBox(height: 24),
-            TextField(
-              controller: _usernameController,
-              decoration: InputDecoration(
-                labelText: 'Full Name',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                prefixIcon: const Icon(Icons.person),
-                filled: true,
-                fillColor: Colors.white,
-              ),
-              keyboardType: TextInputType.name,
-            ),
+            _buildUsernameTextField(),
             const SizedBox(height: 18),
-            TextField(
-              controller: _emailController,
-              decoration: InputDecoration(
-                labelText: 'Email',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                prefixIcon: const Icon(Icons.email),
-                filled: true,
-                fillColor: Colors.white,
-              ),
-              keyboardType: TextInputType.emailAddress,
-            ),
+            _buildEmailTextField(),
             const SizedBox(height: 18),
-            TextField(
-              controller: _passwordController,
-              decoration: InputDecoration(
-                labelText: 'Password',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                prefixIcon: const Icon(Icons.lock),
-                filled: true,
-                fillColor: Colors.white,
-              ),
-              obscureText: true,
-            ),
+            _buildPasswordTextField(),
             const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: () async {
-                setState(() {
-                  isSigningUp = true;
-                });
-                await _signUpController.signUp(context, _emailController,
-                    _passwordController, _usernameController);
-                setState(() {
-                  isSigningUp = false;
-                });
-              },
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(double.infinity, 50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(25),
-                ),
-                backgroundColor: const Color.fromARGB(255, 228, 15, 0),
-              ),
-              child: isSigningUp
-                  ? const CircularProgressIndicator(
-                      color: Colors.white,
-                    )
-                  : const Text(
-                      'Create Account',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                      ),
-                    ),
-            ),
+            _buildCreateAccountButton(),
             const SizedBox(height: 12),
             const Divider(
               height: 20,
@@ -144,44 +80,153 @@ class _RegisterWidgetState extends State<RegisterWidget> {
               indent: 20,
               endIndent: 20,
             ),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'OR',
-                  style: TextStyle(fontSize: 16),
-                ),
-              ],
+            const Center(
+              child: Text(
+                'OR',
+                style: TextStyle(fontSize: 16),
+              ),
             ),
             const SizedBox(height: 12),
-            ElevatedButton.icon(
-              onPressed: () async {
-                await _signInController.signInWithGoogle(context);
-              },
-              icon: Image.asset(
-                'assets/google.png',
-                width: 24,
-                height: 24,
-              ),
-              label: const Text(
-                'Sign in with Google',
-                style: TextStyle(
-                  fontSize: 17,
-                ),
-              ),
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.black,
-                backgroundColor: Colors.white,
-                minimumSize: const Size(double.infinity, 50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(25),
-                  side: const BorderSide(color: Colors.grey),
-                ),
-              ),
-            ),
+            _buildGoogleSignInButton(),
           ],
         ),
       ),
     );
+  }
+
+  // Method to build the username text field
+  TextField _buildUsernameTextField() {
+    return TextField(
+      controller: _usernameController,
+      decoration: InputDecoration(
+        labelText: 'Full Name',
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        prefixIcon: const Icon(Icons.person),
+        filled: true,
+        fillColor: Colors.white,
+      ),
+      keyboardType: TextInputType.name,
+    );
+  }
+
+  // Method to build the email text field
+  TextField _buildEmailTextField() {
+    return TextField(
+      controller: _emailController,
+      decoration: InputDecoration(
+        labelText: 'Email',
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        prefixIcon: const Icon(Icons.email),
+        filled: true,
+        fillColor: Colors.white,
+      ),
+      keyboardType: TextInputType.emailAddress,
+    );
+  }
+
+  // Method to build the password text field
+  TextField _buildPasswordTextField() {
+    return TextField(
+      controller: _passwordController,
+      decoration: InputDecoration(
+        labelText: 'Password',
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        prefixIcon: const Icon(Icons.lock),
+        filled: true,
+        fillColor: Colors.white,
+      ),
+      obscureText: true,
+    );
+  }
+
+  // Method to build the create account button
+  ElevatedButton _buildCreateAccountButton() {
+    return ElevatedButton(
+      onPressed: _signUp,
+      style: ElevatedButton.styleFrom(
+        minimumSize: const Size(double.infinity, 50),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(25),
+        ),
+        backgroundColor: const Color.fromARGB(255, 228, 15, 0),
+      ),
+      child: isSigningUp
+          ? const CircularProgressIndicator(
+              color: Colors.white,
+            )
+          : const Text(
+              'Create Account',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+              ),
+            ),
+    );
+  }
+
+  // Method to handle the sign up process
+  Future<void> _signUp() async {
+    setState(() {
+      isSigningUp = true;
+    });
+    await _signUpController.signUp(
+        context, _emailController, _passwordController, _usernameController);
+    setState(() {
+      isSigningUp = false;
+    });
+  }
+
+  // Method to build the Google sign in button
+  ElevatedButton _buildGoogleSignInButton() {
+    return ElevatedButton(
+      onPressed: _signInWithGoogle,
+      style: ElevatedButton.styleFrom(
+        foregroundColor: Colors.black,
+        backgroundColor: Colors.white,
+        minimumSize: const Size(double.infinity, 50),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(25),
+          side: const BorderSide(color: Colors.grey),
+        ),
+      ),
+      child: isSigningUpWithGoogle
+          ? const CircularProgressIndicator(
+              color: Colors.black,
+            )
+          : Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'assets/google.png',
+                  width: 24,
+                  height: 24,
+                ),
+                const SizedBox(width: 8),
+                const Text(
+                  'Sign in with Google',
+                  style: TextStyle(
+                    fontSize: 17,
+                  ),
+                ),
+              ],
+            ),
+    );
+  }
+
+  // Method to handle sign in with Google process
+  Future<void> _signInWithGoogle() async {
+    setState(() {
+      isSigningUpWithGoogle = true;
+    });
+    await _signInController.signInWithGoogle(context);
+    setState(() {
+      isSigningUpWithGoogle = false;
+    });
   }
 }

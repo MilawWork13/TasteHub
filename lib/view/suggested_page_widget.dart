@@ -4,7 +4,7 @@ import 'package:taste_hub/components/cool_search_bar.dart';
 import 'package:taste_hub/components/culture_card.dart';
 import 'package:taste_hub/components/recipe_card.dart';
 import 'package:taste_hub/controller/services/firebase_storage_service.dart';
-import 'package:taste_hub/controller/suggested_page_controller.dart';
+import 'package:taste_hub/controller/recipe_controller.dart';
 import 'package:taste_hub/model/Culture.dart';
 import 'package:taste_hub/model/Recipe.dart';
 import 'package:taste_hub/view/recipe_detail_widget.dart';
@@ -17,7 +17,7 @@ class SuggestedPage extends StatefulWidget {
 }
 
 class SuggestedPageState extends State<SuggestedPage> {
-  final SuggestedPageController _controller = SuggestedPageController();
+  final RecipeController _controller = RecipeController();
 
   @override
   void initState() {
@@ -25,20 +25,21 @@ class SuggestedPageState extends State<SuggestedPage> {
     _initializePage();
   }
 
-  Future<void> _initializePage() async {
-    await _controller.initialize();
-    User? user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      await _controller.fetchFavoriteRecipes(user.email!);
-    }
+  // Initialize the page by fetching initial data
+  void _initializePage() async {
+    _controller.initialize().then((_) {
+      setState(
+          () {}); // Update the state to reflect changes after initialization
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    User? user = FirebaseAuth.instance.currentUser;
     return Scaffold(
       body: RefreshIndicator(
         onRefresh: () async {
-          await _controller.refreshPage();
+          await _controller.refreshPage(); // Refresh the page content
         },
         child: CustomScrollView(
           slivers: [
@@ -48,6 +49,7 @@ class SuggestedPageState extends State<SuggestedPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Title and description for the suggested recipes
                     Text(
                       'Suggested recipes',
                       style: TextStyle(
@@ -69,6 +71,7 @@ class SuggestedPageState extends State<SuggestedPage> {
                 ),
               ),
             ),
+            // Search bar for filtering recipes
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 16),
@@ -79,6 +82,7 @@ class SuggestedPageState extends State<SuggestedPage> {
                 ),
               ),
             ),
+            // Horizontal list of culture cards for selecting recipes by culture
             SliverToBoxAdapter(
               child: SizedBox(
                 height: 95,
@@ -111,6 +115,7 @@ class SuggestedPageState extends State<SuggestedPage> {
                 ),
               ),
             ),
+            // Sliver list of recipe cards to display suggested recipes
             ValueListenableBuilder<bool>(
               valueListenable: _controller.isSearching,
               builder: (context, isSearching, _) {
@@ -120,6 +125,7 @@ class SuggestedPageState extends State<SuggestedPage> {
                       : _controller.suggestedRecipes,
                   builder: (context, recipesToDisplay, _) {
                     if (recipesToDisplay.isEmpty) {
+                      // Display message when no recipes are found
                       return const SliverToBoxAdapter(
                         child: Center(
                           child: Padding(
@@ -135,6 +141,7 @@ class SuggestedPageState extends State<SuggestedPage> {
                         ),
                       );
                     }
+                    // Display list of recipe cards
                     return SliverList(
                       delegate: SliverChildBuilderDelegate(
                         (BuildContext context, int index) {
@@ -142,6 +149,7 @@ class SuggestedPageState extends State<SuggestedPage> {
                               .contains(recipesToDisplay[index]);
                           return GestureDetector(
                             onTap: () {
+                              // Navigate to recipe detail screen when tapped
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -161,6 +169,10 @@ class SuggestedPageState extends State<SuggestedPage> {
                               mongoDBService: _controller.mongoDBService,
                               isFirstCard: index == 0,
                               isFavourite: isFavourite,
+                              onFavoriteChanged: () {
+                                _controller
+                                    .fetchFavoriteRecipes(user?.email ?? '');
+                              },
                             ),
                           );
                         },

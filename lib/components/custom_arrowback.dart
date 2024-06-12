@@ -11,18 +11,16 @@ class CustomBackArrowButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin:
-          const EdgeInsets.only(left: 18, top: 40), // Adjust margin as needed
+      margin: const EdgeInsets.only(left: 18, top: 40),
       child: ClipOval(
         child: Container(
-          color: Colors.white, // Set the background color to white
+          color: Colors.white,
           child: Padding(
-            padding:
-                const EdgeInsets.fromLTRB(4, 0, 0, 0), // Adjust icon position
+            padding: const EdgeInsets.fromLTRB(4, 0, 0, 0),
             child: IconButton(
               icon: const Icon(
                 Icons.arrow_back_ios,
-                color: Colors.black, // Set the color of the icon to black
+                color: Colors.black,
                 size: 18,
               ),
               onPressed:

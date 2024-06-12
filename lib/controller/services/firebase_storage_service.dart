@@ -8,9 +8,9 @@ class FirebaseStorageService {
   final FirebaseStorage _storage = FirebaseStorage.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  // List all images in Firebase Storage
   Future<ListResult> listImages() async {
     try {
-      // Ensure user is authenticated
       User? user = _auth.currentUser;
       if (user == null) {
         throw Exception('User is not authenticated');
@@ -21,13 +21,13 @@ class FirebaseStorageService {
       }
     } catch (e) {
       debugPrint('Error listing images: ${e.toString()}');
-      rethrow; // Rethrow the error for handling in UI or other layers
+      rethrow;
     }
   }
 
+  // Download a Recipe image from Firebase Storage
   Future<String> downloadRecipeImageURL(String imageName) async {
     try {
-      // Ensure user is authenticated
       User? user = _auth.currentUser;
       if (user == null) {
         throw Exception('User is not authenticated');
@@ -43,9 +43,9 @@ class FirebaseStorageService {
     }
   }
 
+  // Download a Culture image from Firebase Storage
   Future<String> downloadCultureImageURL(String imageName) async {
     try {
-      // Ensure user is authenticated
       User? user = _auth.currentUser;
       if (user == null) {
         throw Exception('User is not authenticated');
@@ -61,9 +61,9 @@ class FirebaseStorageService {
     }
   }
 
+  // Upload an image to Firebase Storage
   Future<String> uploadImage(File imageFile, String imageName) async {
     try {
-      // Ensure user is authenticated
       User? user = _auth.currentUser;
       if (user == null) {
         throw Exception('User is not authenticated');
@@ -75,7 +75,7 @@ class FirebaseStorageService {
       }
     } catch (e) {
       debugPrint('Error uploading image: ${e.toString()}');
-      rethrow; // Rethrow the error for handling in UI or other layers
+      rethrow;
     }
   }
 }

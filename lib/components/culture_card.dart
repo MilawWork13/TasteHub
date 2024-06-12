@@ -1,6 +1,6 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:taste_hub/controller/services/firebase_storage_service.dart';
 import 'package:taste_hub/controller/services/mongo_db_service.dart';
 import 'package:taste_hub/model/Culture.dart';
@@ -30,9 +30,10 @@ class CultureCard extends StatelessWidget {
             snapshot.hasData) {
           return Padding(
             padding: EdgeInsets.only(
-                left: isFirstCard ? 16.0 : 0,
-                bottom: 8,
-                right: isLastCard ? 16.0 : 0),
+              left: isFirstCard ? 16.0 : 0,
+              bottom: 8,
+              right: isLastCard ? 16.0 : 0,
+            ),
             child: SizedBox(
               width: 150,
               child: Card(
@@ -42,7 +43,7 @@ class CultureCard extends StatelessWidget {
                   side: const BorderSide(
                     width: 1,
                     color: Colors.white,
-                  ), // Add white border
+                  ),
                 ),
                 child: Stack(
                   fit: StackFit.expand,
@@ -52,6 +53,18 @@ class CultureCard extends StatelessWidget {
                       child: CachedNetworkImage(
                         imageUrl: snapshot.data!,
                         fit: BoxFit.cover,
+                        placeholder: (context, url) => Shimmer.fromColors(
+                          baseColor: Colors.grey[300]!,
+                          highlightColor: Colors.grey[100]!,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16),
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.error),
                       ),
                     ),
                     Container(
@@ -84,12 +97,33 @@ class CultureCard extends StatelessWidget {
             ),
           );
         }
-        return const SizedBox(
-          height: 300,
-          child: Center(
-            child: SpinKitFadingCircle(
-              color: Color.fromARGB(255, 255, 71, 71),
-              size: 50.0,
+        return Padding(
+          padding: EdgeInsets.only(
+            left: isFirstCard ? 16.0 : 0,
+            bottom: 8,
+            right: isLastCard ? 16.0 : 0,
+          ),
+          child: SizedBox(
+            width: 150,
+            child: Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: const BorderSide(
+                  width: 1,
+                  color: Colors.white,
+                ),
+              ),
+              child: Shimmer.fromColors(
+                baseColor: Colors.grey[300]!,
+                highlightColor: Colors.grey[100]!,
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    color: Colors.white,
+                  ),
+                ),
+              ),
             ),
           ),
         );

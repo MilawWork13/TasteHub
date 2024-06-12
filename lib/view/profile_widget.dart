@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:taste_hub/components/toast.dart';
@@ -9,22 +11,26 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Retrieve current user information
     final User? user = FirebaseAuth.instance.currentUser;
-    final SignInController signInController = SignInController();
-    final TextEditingController emailController = TextEditingController();
+
+    // Controllers for handling user input
     final TextEditingController reportController = TextEditingController();
+
+    // Controllers for handling user actions and data
+    final SignInController signInController = SignInController();
     final ProfilePageController profilePageController = ProfilePageController();
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: const SizedBox.shrink(),
+        title: const SizedBox.shrink(), // Hide app bar title
       ),
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
-          const SizedBox(height: 0),
+          // User welcome section
           Align(
             alignment: Alignment.centerLeft,
             child: Column(
@@ -51,6 +57,8 @@ class ProfilePage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
+
+          // Thank you message container
           Container(
             padding: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
@@ -81,6 +89,8 @@ class ProfilePage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
+
+          // Language selection tile
           const Align(
             alignment: Alignment.centerRight,
             child: ExpansionTile(
@@ -99,7 +109,7 @@ class ProfilePage extends StatelessWidget {
                         leading: Radio(
                           value: 'en',
                           groupValue: 'en',
-                          onChanged: null,
+                          onChanged: null, // No action on language change
                         ),
                       ),
                       ListTile(
@@ -107,7 +117,7 @@ class ProfilePage extends StatelessWidget {
                         leading: Radio(
                           value: 'es',
                           groupValue: 'en',
-                          onChanged: null,
+                          onChanged: null, // No action on language change
                         ),
                       ),
                     ],
@@ -116,6 +126,8 @@ class ProfilePage extends StatelessWidget {
               ],
             ),
           ),
+
+          // Forgot password section
           Align(
             alignment: Alignment.centerRight,
             child: ExpansionTile(
@@ -130,45 +142,34 @@ class ProfilePage extends StatelessWidget {
                   child: Column(
                     children: [
                       const Text(
-                        'Enter your email address to receive a password reset link.',
+                        'Click on the button to send you a link to reset your password.',
                         style: TextStyle(fontSize: 17),
-                      ),
-                      const SizedBox(height: 10),
-                      TextField(
-                        controller: emailController,
-                        decoration: const InputDecoration(
-                          labelText: 'Email Address',
-                          labelStyle: TextStyle(fontSize: 17),
-                          border: OutlineInputBorder(),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.red),
-                          ),
-                        ),
                       ),
                       const SizedBox(height: 10),
                       ElevatedButton(
                         onPressed: () async {
-                          String? email = emailController.text;
-                          if (email.isNotEmpty) {
+                          // Send password reset email functionality
+                          String? email = user?.email;
+                          if (email != null) {
                             try {
                               await FirebaseAuth.instance
                                   .sendPasswordResetEmail(email: email);
-                              // Show a success message or navigate to a success page
+                              // Show success message
                               // ignore: use_build_context_synchronously
                               showSuccessToast(context,
                                   message:
                                       'Password reset email sent. Check your inbox.');
                             } catch (e) {
-                              // Show an error message if sending fails
+                              // Show error message
                               // ignore: use_build_context_synchronously
                               showErrorToast(context,
                                   message:
                                       'Failed to send password reset email.');
                             }
                           } else {
-                            // Show an error message if email is empty
+                            // Show error message for empty email (though user shouldn't reach here)
                             showErrorToast(context,
-                                message: 'Please enter your email adress.');
+                                message: 'Unable to retrieve email.');
                           }
                         },
                         style: ElevatedButton.styleFrom(
@@ -179,7 +180,7 @@ class ProfilePage extends StatelessWidget {
                           backgroundColor: Colors.red,
                         ),
                         child: const Text(
-                          'Send Reset Link',
+                          'Reset Password',
                           style: TextStyle(color: Colors.white, fontSize: 18),
                         ),
                       ),
@@ -189,6 +190,8 @@ class ProfilePage extends StatelessWidget {
               ],
             ),
           ),
+
+          // Bug report section
           Align(
             alignment: Alignment.centerRight,
             child: ExpansionTile(
@@ -217,25 +220,31 @@ class ProfilePage extends StatelessWidget {
                       const SizedBox(height: 10),
                       ElevatedButton(
                         onPressed: () async {
+                          // Submit bug report functionality
                           profilePageController
-                              .saveReport(user!.email!, user.displayName!,
-                                  reportController.text)
+                              .saveReport(
+                                  generateRandomNumber(),
+                                  user!.email!,
+                                  user.displayName!,
+                                  reportController.text,
+                                  'pending')
                               .then((success) {
                             if (success) {
-                              // Show success toast if the report is successfully sent
+                              // Show success toast
+                              // ignore: use_build_context_synchronously
                               showSuccessToast(context,
                                   message: 'Bug report sent successfully!');
                               reportController.text = '';
                             } else {
-                              // Show error toast if there's an issue sending the report
+                              // Show error toast
+                              // ignore: use_build_context_synchronously
                               showErrorToast(context,
                                   message: 'Failed to send bug report.');
                             }
                           });
                         },
                         style: ElevatedButton.styleFrom(
-                          minimumSize:
-                              const Size(150, 40), // Adjust button size
+                          minimumSize: const Size(150, 40),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(25),
                           ),
@@ -253,19 +262,22 @@ class ProfilePage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
+
+          // Logout button
           Align(
             alignment: Alignment.centerRight,
             child: ElevatedButton(
               onPressed: () async {
-                // Call the logout method from SignInController
+                // Show logout confirmation dialog
                 bool? shouldLogout = await _showLogoutDialog(context);
                 if (shouldLogout == true) {
+                  // Logout user
                   // ignore: use_build_context_synchronously
                   signInController.logout(context);
                 }
               },
               style: ElevatedButton.styleFrom(
-                minimumSize: const Size(150, 40), // Adjust button size
+                minimumSize: const Size(150, 40),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(25),
                 ),
@@ -282,13 +294,13 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  // Dialog to confirm logout
+  // Function to display logout confirmation dialog
   Future<bool?> _showLogoutDialog(BuildContext context) {
     return showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Are you trying to logout?'),
+          title: const Text('Are you sure you want to logout?'),
           actions: <Widget>[
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
@@ -302,5 +314,13 @@ class ProfilePage extends StatelessWidget {
         );
       },
     );
+  }
+
+  // Function to generate a random number for bug report ID
+  int generateRandomNumber() {
+    Random random = Random();
+    int min = 100000;
+    int max = 999999;
+    return min + random.nextInt(max - min);
   }
 }

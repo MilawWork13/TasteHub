@@ -40,7 +40,6 @@ class SignUpController {
         await mongoDBService.createUser(newUser);
         await mongoDBService.disconnect();
 
-        print('User have been added to mongo');
         // ignore: use_build_context_synchronously
         Navigator.pushNamed(context, '/sign_in');
         // ignore: use_build_context_synchronously

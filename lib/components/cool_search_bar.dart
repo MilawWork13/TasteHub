@@ -31,7 +31,7 @@ class SearchBarNiceWidgetState extends State<SearchBarNiceWidget> {
               offset: Offset(0, 1),
             )
           ],
-          borderRadius: BorderRadius.circular(30), // Set to half of the height
+          borderRadius: BorderRadius.circular(30),
           border: Border.all(
             color: Colors.grey[300]!,
           ),
@@ -80,9 +80,8 @@ class SearchBarNiceWidgetState extends State<SearchBarNiceWidget> {
               const SizedBox(width: 8),
               GestureDetector(
                 onTap: () {
-                  // Clear the search text and trigger search
                   widget.onSearch('');
-                  _controller.clear(); // Clear the text field visually
+                  _controller.clear();
                 },
                 child: Container(
                   width: 40,

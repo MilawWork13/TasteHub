@@ -13,34 +13,40 @@ class OnboardingSlideshowWidget extends StatefulWidget {
 }
 
 class _OnboardingSlideshowWidgetState extends State<OnboardingSlideshowWidget> {
+  // Page controller for managing slide pages
   final PageController _pageController = PageController();
+
+  // Current page index of the slideshow
   int _currentPage = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset:
+          false, // Prevents resizing on keyboard appearance
       appBar: CustomBackArrow(
-        title: '',
+        // Custom app bar with back button
+        title: '', // Empty title
         backButton: true,
         onBackButtonPressed: () {
-          Navigator.pop(context);
+          Navigator.pop(context); // Navigate back when back button is pressed
         },
       ),
       body: LayoutBuilder(
+        // Builds the layout based on constraints
         builder: (context, constraints) {
           final maxHeight = constraints.maxHeight;
           final maxWidth = constraints.maxWidth;
-          final paddingHorizontal = maxWidth * 0.1;
-          final paddingVertical = maxHeight * 0.12;
+          final paddingHorizontal = maxWidth * 0.1; // Horizontal padding
+          final paddingVertical = maxHeight * 0.12; // Vertical padding
 
           return Stack(
             children: [
               PageView(
-                controller: _pageController,
+                controller: _pageController, // Manages pages and scrolling
                 onPageChanged: (int page) {
                   setState(() {
-                    _currentPage = page;
+                    _currentPage = page; // Update current page index
                   });
                 },
                 children: [
@@ -80,11 +86,13 @@ class _OnboardingSlideshowWidgetState extends State<OnboardingSlideshowWidget> {
                   child: ElevatedButton(
                     onPressed: () {
                       if (_currentPage < 2) {
+                        // Move to the next slide
                         _pageController.nextPage(
                           duration: const Duration(milliseconds: 300),
                           curve: Curves.ease,
                         );
                       } else {
+                        // Navigate to sign-in screen after onboarding
                         Navigator.of(context).pushNamed('/sign_in');
                       }
                     },
@@ -107,8 +115,9 @@ class _OnboardingSlideshowWidgetState extends State<OnboardingSlideshowWidget> {
                 child: Padding(
                   padding: const EdgeInsets.only(bottom: 150),
                   child: smooth_page_indicator.SmoothPageIndicator(
-                    controller: _pageController,
-                    count: 3,
+                    controller:
+                        _pageController, // Indicator linked to page controller
+                    count: 3, // Total number of slides
                     effect: const smooth_page_indicator.ExpandingDotsEffect(
                       activeDotColor: Color.fromARGB(255, 0, 0, 0),
                       dotHeight: 8,

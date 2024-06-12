@@ -3,6 +3,7 @@ import 'package:delightful_toast/delight_toast.dart';
 import 'package:delightful_toast/toast/utils/enums.dart';
 import 'package:flutter/material.dart';
 
+// Show an error toast
 void showErrorToast(BuildContext context, {required String message}) {
   DelightToastBar(
     autoDismiss: true,
@@ -26,6 +27,7 @@ void showErrorToast(BuildContext context, {required String message}) {
   ).show(context);
 }
 
+// Show a success toast
 void showSuccessToast(BuildContext context, {required String message}) {
   DelightToastBar(
     autoDismiss: true,

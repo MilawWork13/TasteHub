@@ -23,22 +23,25 @@ class _AdminHomePageState extends State<AdminHomePage> {
   }
 
   final List<Widget> _pages = <Widget>[
-    const AdminReportPage(),
-    const ManageUsersPage(),
+    const AdminReportPage(), // AdminReportPage widget added to the indexed stack
+    const ManageUsersPage(), // ManageUsersPage widget added to the indexed stack
   ];
 
   @override
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
+      // ignore: deprecated_member_use
       onPopInvoked: (bool didPop) async {
         if (didPop) {
           return;
         }
-        final bool shouldLogout = await _showLogoutDialog() ?? false;
+        final bool shouldLogout =
+            await _showLogoutDialog() ?? false; // Show logout dialog
         if (shouldLogout) {
           // ignore: use_build_context_synchronously
-          await _signInController.logout(context);
+          await _signInController
+              .logout(context); // Logout action handled by SignInController
         }
       },
       child: Scaffold(
@@ -71,6 +74,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
     );
   }
 
+  // Method to show the logout dialog
   Future<bool?> _showLogoutDialog() {
     return showDialog<bool>(
       context: context,

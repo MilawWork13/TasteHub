@@ -1,5 +1,6 @@
 import 'package:mongo_dart/mongo_dart.dart';
 
+// UserModel class
 class UserModel {
   ObjectId id;
   String name;
@@ -8,6 +9,7 @@ class UserModel {
   String role;
   List<ObjectId> favouriteReceipts;
 
+  // Constructor
   UserModel({
     required this.id,
     required this.name,
@@ -17,6 +19,7 @@ class UserModel {
     required this.favouriteReceipts,
   });
 
+  // Convert to JSON
   Map<String, dynamic> toJson() => {
         '_id': id,
         'name': name,
@@ -26,6 +29,7 @@ class UserModel {
         'favourite_receipts': favouriteReceipts,
       };
 
+  // Convert from JSON
   static UserModel fromJson(Map<String, dynamic> json) => UserModel(
         id: json['_id'],
         name: json['name'],

@@ -19,19 +19,16 @@ class CustomBackArrow extends StatelessWidget implements PreferredSizeWidget {
       automaticallyImplyLeading: backButton,
       leading: backButton
           ? Container(
-              margin: const EdgeInsets.only(
-                  left: 16, top: 8, bottom: 8), // Adjust margins as needed
+              margin: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
               child: ClipOval(
                 child: Container(
-                  color: Colors.white, // Set the background color to white
+                  color: Colors.white,
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                        8, 5, 8, 8), // Adjust icon position
+                    padding: const EdgeInsets.fromLTRB(8, 5, 8, 8),
                     child: IconButton(
                       icon: const Icon(
                         Icons.arrow_back_ios,
-                        color:
-                            Colors.black, // Set the color of the icon to black
+                        color: Colors.black,
                         size: 14,
                       ),
                       onPressed: onBackButtonPressed ??
@@ -42,9 +39,8 @@ class CustomBackArrow extends StatelessWidget implements PreferredSizeWidget {
               ),
             )
           : null,
-      backgroundColor: const Color.fromARGB(
-          0, 255, 255, 255), // Set app bar background color to transparent
-      elevation: 0, // Remove app bar elevation
+      backgroundColor: const Color.fromARGB(0, 255, 255, 255),
+      elevation: 0,
     );
   }
 

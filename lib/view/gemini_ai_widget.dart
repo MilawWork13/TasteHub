@@ -11,17 +11,21 @@ class AiChatPage extends StatefulWidget {
 }
 
 class _AiChatPageState extends State<AiChatPage> {
-  final GeminiAiController _geminiAiController = GeminiAiController();
-  final TextEditingController _controller = TextEditingController();
-  final ScrollController _scrollController = ScrollController();
+  final GeminiAiController _geminiAiController =
+      GeminiAiController(); // Instance of GeminiAiController
+  final TextEditingController _controller =
+      TextEditingController(); // Controller for the user input text field
+  final ScrollController _scrollController =
+      ScrollController(); // Controller for scrolling the chat messages
   final List<Message> _messages = [
+    // List to hold chat messages
     Message(
       text:
           'Welcome to Tasteful AI, I will be your assistant. Ask whatever you want!',
       isUser: false,
     ),
   ];
-  bool _isLoading = false;
+  bool _isLoading = false; // Flag to track loading state
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +44,7 @@ class _AiChatPageState extends State<AiChatPage> {
             ],
           ),
           child: AppBar(
-            automaticallyImplyLeading: false,
+            automaticallyImplyLeading: false, // Disable back button in app bar
             centerTitle: false,
             backgroundColor: Colors.white,
             title: Row(
@@ -48,23 +52,24 @@ class _AiChatPageState extends State<AiChatPage> {
               children: [
                 const Row(
                   children: [
-                    Icon(Icons.auto_awesome),
+                    Icon(Icons.auto_awesome), // Icon for the app bar title
                     SizedBox(width: 10),
                     Text(
-                      'Tasteful AI',
+                      'Tasteful AI', // Title text in the app bar
                       style: TextStyle(color: Colors.black),
                     ),
                   ],
                 ),
                 IconButton(
                   onPressed: () async {
-                    await _geminiAiController.showClearChatDialog(
-                        context, _messages);
+                    await _geminiAiController.showClearChatDialog(context,
+                        _messages); // Show dialog to clear chat history
                     setState(() {
-                      _isLoading = false;
+                      _isLoading = false; // Update loading state
                     });
                   },
-                  icon: const Icon(Icons.cleaning_services),
+                  icon: const Icon(
+                      Icons.cleaning_services), // Icon button to clear chat
                   color: Colors.black,
                 ),
               ],
@@ -74,7 +79,8 @@ class _AiChatPageState extends State<AiChatPage> {
       ),
       body: GestureDetector(
         onTap: () {
-          FocusScope.of(context).unfocus();
+          FocusScope.of(context)
+              .unfocus(); // Dismiss keyboard on tap outside text field
         },
         child: Column(
           children: [
@@ -83,18 +89,21 @@ class _AiChatPageState extends State<AiChatPage> {
                 controller: _scrollController,
                 itemCount: _messages.length,
                 itemBuilder: (context, index) {
-                  final message = _messages[index];
+                  final message = _messages[index]; // Current message
                   return ListTile(
                     title: Align(
                       alignment: message.isUser
-                          ? Alignment.centerRight
-                          : Alignment.centerLeft,
+                          ? Alignment
+                              .centerRight // Align user messages to right
+                          : Alignment.centerLeft, // Align AI messages to left
                       child: Container(
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           color: message.isUser
-                              ? const Color.fromARGB(255, 255, 255, 255)
-                              : const Color.fromARGB(255, 255, 148, 148),
+                              ? const Color.fromARGB(255, 255, 255,
+                                  255) // User message background color
+                              : const Color.fromARGB(255, 255, 148,
+                                  148), // AI message background color
                           borderRadius: message.isUser
                               ? const BorderRadius.only(
                                   topLeft: Radius.circular(20),
@@ -109,11 +118,12 @@ class _AiChatPageState extends State<AiChatPage> {
                         ),
                         child: RichText(
                           text: TextSpan(
-                            children: processText(message.text),
+                            children: processText(message
+                                .text), // Format text based on message type
                             style: TextStyle(
                                 color: message.isUser
-                                    ? Colors.black
-                                    : Colors.white),
+                                    ? Colors.black // User message text color
+                                    : Colors.white), // AI message text color
                           ),
                         ),
                       ),
@@ -144,7 +154,8 @@ class _AiChatPageState extends State<AiChatPage> {
                       child: TextField(
                         controller: _controller,
                         decoration: const InputDecoration(
-                          hintText: 'Write your message',
+                          hintText:
+                              'Write your message', // Hint text for input field
                           border: InputBorder.none,
                           contentPadding: EdgeInsets.symmetric(horizontal: 20),
                         ),
@@ -167,21 +178,21 @@ class _AiChatPageState extends State<AiChatPage> {
                             child: IconButton(
                               onPressed: () async {
                                 setState(() {
-                                  _isLoading = true;
+                                  _isLoading = true; // Set loading state
                                 });
                                 await _geminiAiController.callGeminiModel(
                                     _messages,
                                     _controller,
                                     context,
-                                    _scrollController);
+                                    _scrollController); // Call AI model for response
                                 setState(() {
-                                  _controller.clear();
-                                  _isLoading = false;
+                                  _controller.clear(); // Clear input field
+                                  _isLoading = false; // Reset loading state
                                 });
                               },
                               icon: const Icon(
                                 Icons.send_rounded,
-                                color: Colors.red,
+                                color: Colors.red, // Send button color
                               ),
                             )),
                   ],

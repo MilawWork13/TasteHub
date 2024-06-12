@@ -1,5 +1,6 @@
 import 'package:mongo_dart/mongo_dart.dart';
 
+// Ingredient class
 class Ingredient {
   final String name;
   final String quantity;
@@ -14,6 +15,7 @@ class Ingredient {
   }
 }
 
+// Instruction class
 class Instruction {
   final String step;
   final int order;
@@ -28,6 +30,7 @@ class Instruction {
   }
 }
 
+// Recipe class
 class Recipe {
   final ObjectId id;
   final String name;
@@ -39,9 +42,9 @@ class Recipe {
   final double price;
   final String creator;
   final String creationDate;
-  final String image;
-  final List<String> audios;
+  late final String image;
 
+  // Constructor
   Recipe({
     required this.id,
     required this.name,
@@ -54,12 +57,24 @@ class Recipe {
     required this.creator,
     required this.creationDate,
     required this.image,
-    required this.audios,
   });
 
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Recipe && other.id == id;
+  }
+
+  @override
+  int get hashCode => id.hashCode;
+
+  // Convert from JSON
   factory Recipe.fromJson(Map<String, dynamic> json) {
     return Recipe(
-      id: json['_id'],
+      id: json['_id'] is ObjectId
+          ? json['_id']
+          : ObjectId.fromHexString(json['_id']),
       name: json['name'],
       ingredients: (json['ingredients'] as List)
           .map((i) => Ingredient.fromJson(i))
@@ -70,11 +85,30 @@ class Recipe {
       cultureId: json['culture'],
       preparationTime: json['preparation_time'],
       allergens: List<String>.from(json['allergens']),
-      price: json['price'],
+      price: json['price'].toDouble(),
       creator: json['creator'],
       creationDate: json['creation_date'],
       image: json['image'],
-      audios: List<String>.from(json['audios']),
     );
+  }
+
+  // Convert to JSON
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'name': name,
+      'ingredients': ingredients
+          .map((i) => {'name': i.name, 'quantity': i.quantity})
+          .toList(),
+      'instructions':
+          instructions.map((i) => {'step': i.step, 'order': i.order}).toList(),
+      'culture': cultureId,
+      'preparation_time': preparationTime,
+      'allergens': allergens,
+      'price': price,
+      'creator': creator,
+      'creation_date': creationDate,
+      'image': image,
+    };
   }
 }

@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:taste_hub/components/favourite_button.dart';
 import 'package:taste_hub/controller/services/firebase_storage_service.dart';
 import 'package:taste_hub/controller/services/mongo_db_service.dart';
@@ -13,6 +13,7 @@ class RecipeCard extends StatelessWidget {
   final MongoDBService mongoDBService;
   final bool isFirstCard;
   final bool isFavourite;
+  final VoidCallback? onFavoriteChanged;
 
   const RecipeCard({
     super.key,
@@ -21,6 +22,7 @@ class RecipeCard extends StatelessWidget {
     required this.mongoDBService,
     this.isFirstCard = false,
     required this.isFavourite,
+    this.onFavoriteChanged,
   });
 
   @override
@@ -33,7 +35,10 @@ class RecipeCard extends StatelessWidget {
             snapshot.hasData) {
           return Padding(
             padding: EdgeInsets.only(
-                left: 16.0, right: 16.0, top: isFirstCard ? 8.0 : 0),
+              left: 16.0,
+              right: 16.0,
+              top: isFirstCard ? 8.0 : 0,
+            ),
             child: SizedBox(
               height: 300,
               child: Card(
@@ -49,6 +54,18 @@ class RecipeCard extends StatelessWidget {
                       CachedNetworkImage(
                         imageUrl: snapshot.data!,
                         fit: BoxFit.cover,
+                        placeholder: (context, url) => Shimmer.fromColors(
+                          baseColor: Colors.grey[300]!,
+                          highlightColor: Colors.grey[100]!,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(32),
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.error),
                       ),
                       Container(
                         decoration: BoxDecoration(
@@ -130,6 +147,9 @@ class RecipeCard extends StatelessWidget {
                                       .replaceAll('ObjectId("', '')
                                       .replaceAll('")', ''));
                             }
+                            if (onFavoriteChanged != null) {
+                              onFavoriteChanged!();
+                            }
                           },
                         ),
                       ),
@@ -140,12 +160,29 @@ class RecipeCard extends StatelessWidget {
             ),
           );
         } else {
-          return const SizedBox(
-            height: 300,
-            child: Center(
-              child: SpinKitFadingCircle(
-                color: Color.fromARGB(255, 255, 71, 71),
-                size: 50.0,
+          return Padding(
+            padding: EdgeInsets.only(
+              left: 16.0,
+              right: 16.0,
+              top: isFirstCard ? 8.0 : 0,
+            ),
+            child: SizedBox(
+              height: 300,
+              child: Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(32),
+                ),
+                child: Shimmer.fromColors(
+                  baseColor: Colors.grey[300]!,
+                  highlightColor: Colors.grey[100]!,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(32),
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
               ),
             ),
           );

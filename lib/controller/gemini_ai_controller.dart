@@ -5,6 +5,7 @@ import 'package:taste_hub/components/toast.dart';
 import 'package:taste_hub/model/Message.dart';
 
 class GeminiAiController {
+  // Call the Gemini model to generate a response
   callGeminiModel(List messages, TextEditingController controller,
       BuildContext context, ScrollController scrollController) async {
     try {
@@ -39,6 +40,7 @@ class GeminiAiController {
     }
   }
 
+  // Show a dialog to confirm clearing the chat
   showClearChatDialog(BuildContext context, List<Message> messages) async {
     // Wait for the user's response from the dialog
     final result = await showDialog(
@@ -51,15 +53,13 @@ class GeminiAiController {
             TextButton(
               child: const Text('No'),
               onPressed: () {
-                Navigator.of(context)
-                    .pop(false); // Return false to indicate "No"
+                Navigator.of(context).pop(false);
               },
             ),
             TextButton(
               child: const Text('Yes'),
               onPressed: () {
-                Navigator.of(context)
-                    .pop(true); // Return true to indicate "Yes"
+                Navigator.of(context).pop(true);
               },
             ),
           ],
@@ -67,9 +67,7 @@ class GeminiAiController {
       },
     );
 
-    // Check the result of the dialog
     if (result == true) {
-      // Clear the messages if the user clicked "Yes"
       messages.clear();
     }
   }

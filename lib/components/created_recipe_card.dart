@@ -1,12 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:taste_hub/components/delete_recipe_button.dart';
 import 'package:taste_hub/components/modify_recipe_button.dart';
+import 'package:taste_hub/controller/modify_recipe_controller.dart';
 import 'package:taste_hub/controller/services/firebase_storage_service.dart';
 import 'package:taste_hub/controller/services/mongo_db_service.dart';
 import 'package:taste_hub/model/Recipe.dart';
+import 'package:taste_hub/view/modify_recipe_widget.dart';
 
 class CreatedRecipeCard extends StatelessWidget {
   final Recipe recipe;
@@ -26,6 +28,12 @@ class CreatedRecipeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ModifyRecipeController modiftyRecipeController =
+        ModifyRecipeController(
+      recipe: recipe,
+      firebaseStorageService: firebaseStorageService,
+      mongoDBService: mongoDBService,
+    );
     User? user = FirebaseAuth.instance.currentUser;
     return FutureBuilder<String>(
       future: firebaseStorageService.downloadRecipeImageURL(recipe.image),
@@ -53,6 +61,18 @@ class CreatedRecipeCard extends StatelessWidget {
                       CachedNetworkImage(
                         imageUrl: snapshot.data!,
                         fit: BoxFit.cover,
+                        placeholder: (context, url) => Shimmer.fromColors(
+                          baseColor: Colors.grey[300]!,
+                          highlightColor: Colors.grey[100]!,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(32),
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.error),
                       ),
                       Container(
                         decoration: BoxDecoration(
@@ -119,7 +139,15 @@ class CreatedRecipeCard extends StatelessWidget {
                           alignment: Alignment.centerLeft,
                           child: ModifyRecipeButton(
                             onModify: () {
-                              // Handle edit action
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ModifyRecipeScreen(
+                                    recipe: recipe,
+                                    controller: modiftyRecipeController,
+                                  ),
+                                ),
+                              );
                             },
                           ),
                         ),
@@ -130,7 +158,6 @@ class CreatedRecipeCard extends StatelessWidget {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            // DeleteRecipeButton widget
                             DeleteRecipeButton(
                               onDelete: () async {
                                 await mongoDBService.deleteRecipe(
@@ -155,12 +182,29 @@ class CreatedRecipeCard extends StatelessWidget {
             ),
           );
         } else {
-          return const SizedBox(
-            height: 300,
-            child: Center(
-              child: SpinKitFadingCircle(
-                color: Color.fromARGB(255, 255, 71, 71),
-                size: 50.0,
+          return Padding(
+            padding: EdgeInsets.only(
+              left: 16.0,
+              right: 16.0,
+              top: isFirstCard ? 8.0 : 0,
+            ),
+            child: SizedBox(
+              height: 300,
+              child: Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(32),
+                ),
+                child: Shimmer.fromColors(
+                  baseColor: Colors.grey[300]!,
+                  highlightColor: Colors.grey[100]!,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(32),
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
               ),
             ),
           );
