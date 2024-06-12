@@ -1,6 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
+
+import 'package:shimmer/shimmer.dart';
 import 'package:taste_hub/components/custom_arrowback.dart';
 import 'package:taste_hub/components/favourite_button.dart';
 import 'package:taste_hub/components/intruction_tile.dart';
@@ -81,23 +83,33 @@ class RecipeDetailScreenState extends State<RecipeDetailScreen> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done &&
             snapshot.hasData) {
-          return Container(
+          return CachedNetworkImage(
+            imageUrl: snapshot.data!,
             width: double.infinity,
             height: 300,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: NetworkImage(snapshot.data!),
-                fit: BoxFit.cover,
+            fit: BoxFit.cover,
+            placeholder: (context, url) => Shimmer.fromColors(
+              baseColor: Colors.grey[300]!,
+              highlightColor: Colors.grey[100]!,
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                ),
               ),
             ),
+            errorWidget: (context, url, error) => const Icon(Icons.error),
           );
         } else {
-          return const SizedBox(
+          return SizedBox(
             height: 300,
-            child: Center(
-              child: SpinKitFadingCircle(
-                color: Color.fromARGB(255, 255, 71, 71),
-                size: 50.0,
+            child: Shimmer.fromColors(
+              baseColor: Colors.grey[300]!,
+              highlightColor: Colors.grey[100]!,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(32),
+                  color: Colors.white,
+                ),
               ),
             ),
           );
@@ -261,16 +273,19 @@ class RecipeDetailScreenState extends State<RecipeDetailScreen> {
   Widget _buildTabBarView() {
     return SingleChildScrollView(
       physics: const NeverScrollableScrollPhysics(),
-      child: SizedBox(
-        height:
-            _calculateHeight(), // Calculates the height of tab bar view based on content
-        child: TabBarView(
-          children: [
-            _buildIngredientsList(), // Ingredients list
-            _buildInstructionsList(), // Instructions list
-            _buildInfoSection(), // Info section with allergens, creator info, and creation date
-          ],
-        ),
+      child: Column(
+        children: [
+          SizedBox(
+            height: _calculateHeight(),
+            child: TabBarView(
+              children: [
+                _buildIngredientsList(), // Ingredients list
+                _buildInstructionsList(), // Instructions list
+                _buildInfoSection(), // Info section with allergens, creator info, and creation date
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
