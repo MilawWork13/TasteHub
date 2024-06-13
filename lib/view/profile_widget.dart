@@ -220,14 +220,11 @@ class ProfilePage extends StatelessWidget {
                       const SizedBox(height: 10),
                       ElevatedButton(
                         onPressed: () async {
+                          String displayName = user?.displayName ?? 'Anonymous';
                           // Submit bug report functionality
                           profilePageController
-                              .saveReport(
-                                  generateRandomNumber(),
-                                  user!.email!,
-                                  user.displayName!,
-                                  reportController.text,
-                                  'pending')
+                              .saveReport(generateRandomNumber(), user!.email!,
+                                  displayName, reportController.text, 'pending')
                               .then((success) {
                             if (success) {
                               // Show success toast

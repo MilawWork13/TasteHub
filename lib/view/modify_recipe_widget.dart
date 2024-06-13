@@ -175,7 +175,7 @@ class ModifyRecipeScreenState extends State<ModifyRecipeScreen> {
                   borderRadius: BorderRadius.circular(10.0),
                   image: _imagePath != null
                       ? DecorationImage(
-                          image: NetworkImage(_selectedImage!),
+                          image: FileImage(_imagePath!),
                           fit: BoxFit.cover,
                         )
                       : _selectedImage != null
